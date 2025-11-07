@@ -27,6 +27,7 @@ class App extends React.PureComponent<{ game: GameRecord }> {
             <Route path="/editor" component={Editor} />
             <Route path="/gallery" component={Gallery} />
             <Route exact path="/gameover" component={GameoverScene} />
+            <Route path="/tank" component={ChooseTankScene} />
             <Route
               exact
               path="/choose"

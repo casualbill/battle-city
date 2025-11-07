@@ -14,6 +14,7 @@ const TankRecordType = Record({
   color: 'auto' as TankColor,
   hp: 1,
   withPowerUp: false,
+  tankType: 'normal' as 'normal' | 'heavy' | 'tankDestroyer' | 'light' | 'selfPropelledGun',
 
   // 坦克转弯预留位置的坐标
   rx: 0,

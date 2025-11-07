@@ -61,14 +61,22 @@ export class BulletCollisionInfo extends DefaultMap<BulletId, Collision[]> {
   }
 
   // 判断一颗子弹是否发生爆炸
-  static shouldExplode(collisions: Collision[]) {
+  static shouldExplode(collisions: Collision[], bullet?: BulletRecord) {
+    // 坦克歼击车的子弹可以穿透坦克和子弹
+    const isTankDestroyerBullet = bullet && bullet.side === 'player' && 
+      bullet.tankId && bullet.tankId.toString().startsWith('player') &&
+      // 这里需要获取发射子弹的坦克类型，暂时假设bullet对象中包含tankType信息
+      // 实际需要修改子弹创建逻辑，将坦克类型传递给子弹
+      (bullet as any).tankType === 'tankDestroyer';
+    
     for (const c of collisions) {
       if (
         c.type === 'border' ||
         c.type === 'eagle' ||
         c.type === 'brick' ||
         c.type === 'steel' ||
-        (c.type === 'tank' && c.shouldExplode)
+        (!isTankDestroyerBullet && c.type === 'tank' && c.shouldExplode) ||
+        (!isTankDestroyerBullet && c.type === 'bullet')
       ) {
         return true
       }

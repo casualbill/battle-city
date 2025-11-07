@@ -22,6 +22,8 @@ const BulletRecordBase = Record({
   side: 'player' as Side,
   // 发射子弹的玩家
   playerName: null as PlayerName,
+  // 发射子弹的坦克类型
+  tankType: 'normal' as 'normal' | 'heavy' | 'tankDestroyer' | 'light' | 'selfPropelledGun',
 })
 
 export default class BulletRecord extends BulletRecordBase {
