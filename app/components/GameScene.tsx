@@ -1,7 +1,7 @@
 import { List } from 'immutable'
 import React from 'react'
 import { connect } from 'react-redux'
-import { match } from 'react-router'
+import { match } from 'react-router-dom'
 import { Dispatch } from 'redux'
 import { GameRecord } from '../reducers/game'
 import { State } from '../types'
