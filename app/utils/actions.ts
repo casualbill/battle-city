@@ -100,6 +100,12 @@ export enum A {
   SyncCustomStages = 'SyncCustomStages',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
+  SetRandomEvent = 'SetRandomEvent',
+  UpdateEventProgress = 'UpdateEventProgress',
+  ResetEventTimer = 'ResetEventTimer',
+  SetBombingPosition = 'SetBombingPosition',
+  UpdateBombingTimer = 'UpdateBombingTimer',
+  RemoveForests = 'RemoveForests',
 }
 
 export type Move = ReturnType<typeof move>
@@ -678,7 +684,56 @@ export const clearBullets = () => ({ type: A.ClearBullets as A.ClearBullets })
 export type SyncCustomStages = ReturnType<typeof syncCustomStages>
 export const syncCustomStages = () => ({ type: A.SyncCustomStages as A.SyncCustomStages })
 
-export type LeaveGameScene = ReturnType<typeof leaveGameScene>
+export type SetRandomEvent = ReturnType<typeof setRandomEvent>
+export function setRandomEvent(eventType: EventType | null) {
+  return {
+    type: A.SetRandomEvent as A.SetRandomEvent,
+    eventType,
+  }
+}
+
+export type UpdateEventProgress = ReturnType<typeof updateEventProgress>
+export function updateEventProgress(progress: number) {
+  return {
+    type: A.UpdateEventProgress as A.UpdateEventProgress,
+    progress,
+  }
+}
+
+export type ResetEventTimer = ReturnType<typeof resetEventTimer>
+export function resetEventTimer() {
+  return {
+    type: A.ResetEventTimer as A.ResetEventTimer,
+  }
+}
+
+export type SetBombingPosition = ReturnType<typeof setBombingPosition>
+export function setBombingPosition(position: Point | null) {
+  return {
+    type: A.SetBombingPosition as A.SetBombingPosition,
+    position,
+  }
+}
+
+export type UpdateBombingTimer = ReturnType<typeof updateBombingTimer>
+export function updateBombingTimer(timer: number) {
+  return {
+    type: A.UpdateBombingTimer as A.UpdateBombingTimer,
+    timer,
+  }
+}
+
+export type UpdateBombingTimer = ReturnType<typeof updateBombingTimer>
+
+export function removeForests(ts: Set<number>) {
+  return {
+    type: A.RemoveForests as A.RemoveForests,
+    ts,
+  }
+}
+
+export type RemoveForests = ReturnType<typeof removeForests>
+
 export const leaveGameScene = () => ({ type: A.LeaveGameScene as A.LeaveGameScene })
 
 export type Action =

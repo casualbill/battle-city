@@ -55,6 +55,14 @@ const GameRecordBase = Record(
 
     /** stage-enter-curtain相关字段 */
     stageEnterCurtainT: 0,
+    
+    /** 随机事件相关字段 */
+    currentEvent: null as EventType,
+    eventProgress: 0,
+    eventTimer: 0,
+    tideDirection: null as Direction,
+    bombingPosition: null as Point,
+    bombingTimer: 0,
   },
   'GameRecord',
 )
@@ -119,6 +127,16 @@ export default function game(state = new GameRecord(), action: Action) {
     )
   } else if (action.type === A.SetIsSpawningBotTank) {
     return state.set('isSpawningBotTank', action.isSpawning)
+  } else if (action.type === A.SetRandomEvent) {
+    return state.set('currentEvent', action.eventType)
+  } else if (action.type === A.UpdateEventProgress) {
+    return state.set('eventProgress', action.progress)
+  } else if (action.type === A.ResetEventTimer) {
+    return state.set('eventTimer', 0)
+  } else if (action.type === A.SetBombingPosition) {
+    return state.set('bombingPosition', action.position)
+  } else if (action.type === A.UpdateBombingTimer) {
+    return state.set('bombingTimer', action.timer)
   } else {
     return state
   }

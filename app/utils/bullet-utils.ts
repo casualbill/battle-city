@@ -62,21 +62,13 @@ export class BulletCollisionInfo extends DefaultMap<BulletId, Collision[]> {
 
   // 判断一颗子弹是否发生爆炸
   static shouldExplode(collisions: Collision[]) {
-    for (const c of collisions) {
-      if (
-        c.type === 'border' ||
-        c.type === 'eagle' ||
-        c.type === 'brick' ||
-        c.type === 'steel' ||
-        (c.type === 'tank' && c.shouldExplode)
       ) {
         return true
       }
     }
     return false
   }
-
-  getExplosionSoundName(bulletId: BulletId): SoundName {
+        (c.type === 'tank' && c.shouldExplode)
     const bullet = this.bullets.get(bulletId)
     if (bullet.side === 'player') {
       const collisions = this.get(bulletId)
