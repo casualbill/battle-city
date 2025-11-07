@@ -57,6 +57,26 @@ export default function tanks(state = Map() as TanksMap, action: Action) {
     return state.update(action.tankId, tank =>
       tank.set('helmetDuration', Math.max(0, action.duration)),
     )
+  } else if (action.type === A.SetLaserCooldown) {
+    return state.update(action.tankId, tank =>
+      tank.set('laserCooldown', Math.max(0, action.cooldown)),
+    )
+  } else if (action.type === A.SetShieldCooldown) {
+    return state.update(action.tankId, tank =>
+      tank.set('shieldCooldown', Math.max(0, action.cooldown)),
+    )
+  } else if (action.type === A.SetShieldDuration) {
+    return state.update(action.tankId, tank =>
+      tank.set('shieldDuration', Math.max(0, action.duration)),
+    )
+  } else if (action.type === A.SetBoostCooldown) {
+    return state.update(action.tankId, tank =>
+      tank.set('boostCooldown', Math.max(0, action.cooldown)),
+    )
+  } else if (action.type === A.SetBoostDuration) {
+    return state.update(action.tankId, tank =>
+      tank.set('boostDuration', Math.max(0, action.duration)),
+    )
   } else {
     return state
   }

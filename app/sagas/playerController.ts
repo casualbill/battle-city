@@ -1,8 +1,8 @@
 import last from 'lodash/last'
 import pull from 'lodash/pull'
-import { all, take } from 'redux-saga/effects'
+import { all, take, put } from 'redux-saga/effects'
 import { Input, PlayerConfig, TankRecord } from '../types'
-import { A } from '../utils/actions'
+import * as actions from '../utils/actions'
 import directionController from './directionController'
 import fireController from './fireController'
 
@@ -12,6 +12,9 @@ import fireController from './fireController'
 export default function* playerController(tankId: TankId, config: PlayerConfig) {
   let firePressing = false // 用来记录当前玩家是否按下了fire键
   let firePressed = false // 用来记录上一个tick内 玩家是否按下过fire键
+  let laserPressed = false // 用来记录上一个tick内 玩家是否按下过激光键
+  let shieldPressed = false // 用来记录上一个tick内 玩家是否按下过能量盾键
+  let boostPressed = false // 用来记录上一个tick内 玩家是否按下过液氮冲刺键
   const pressed: Direction[] = [] // 用来记录上一个tick内, 玩家按下过的方向键
 
   try {
@@ -21,6 +24,7 @@ export default function* playerController(tankId: TankId, config: PlayerConfig) 
       directionController(tankId, getPlayerInput),
       fireController(tankId, () => firePressed || firePressing),
       resetFirePressedEveryTick(),
+      handleSkills(),
     ])
   } finally {
     document.removeEventListener('keydown', onKeyDown)
@@ -47,6 +51,12 @@ export default function* playerController(tankId: TankId, config: PlayerConfig) 
       tryPush('up')
     } else if (code === config.control.down) {
       tryPush('down')
+    } else if (code === 'KeyK') {
+      laserPressed = true
+    } else if (code === 'KeyL') {
+      shieldPressed = true
+    } else if (code === 'KeyI') {
+      boostPressed = true
     }
   }
 
@@ -82,6 +92,27 @@ export default function* playerController(tankId: TankId, config: PlayerConfig) 
     while (true) {
       yield take(A.Tick)
       firePressed = false
+    }
+  }
+
+  function* handleSkills() {
+    while (true) {
+      yield take(A.Tick)
+      
+      if (laserPressed) {
+        yield put(actions.fireLaser(tankId))
+        laserPressed = false
+      }
+      
+      if (shieldPressed) {
+        yield put(actions.activateShield(tankId))
+        shieldPressed = false
+      }
+      
+      if (boostPressed) {
+        yield put(actions.activateBoost(tankId))
+        boostPressed = false
+      }
     }
   }
   // endregion

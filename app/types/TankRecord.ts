@@ -25,6 +25,16 @@ const TankRecordType = Record({
   frozenTimeout: 0,
   // cooldown小于等于0表示可以进行开火, 大于0表示还需要等待cooldown毫秒才能进行开火
   cooldown: 0,
+  // 激光武器冷却时间
+  laserCooldown: 0,
+  // 能量盾冷却时间
+  shieldCooldown: 0,
+  // 能量盾持续时间
+  shieldDuration: 0,
+  // 液氮冲刺冷却时间
+  boostCooldown: 0,
+  // 液氮冲刺持续时间
+  boostDuration: 0,
   // player tank被队友击中时无法移动，此时坦克会闪烁，该变量用来记录坦克是否可见
   visible: true,
 })
