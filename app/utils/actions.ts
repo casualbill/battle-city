@@ -462,10 +462,11 @@ export function borrowPlayerLife(borrower: PlayerName, lender: PlayerName) {
 }
 
 export type StartGame = ReturnType<typeof startGame>
-export function startGame(stageIndex: number) {
+export function startGame(stageIndex: number, tankTypes?: { player1?: TankType; player2?: TankType }) {
   return {
     type: A.StartGame as A.StartGame,
     stageIndex,
+    tankTypes,
   }
 }
 

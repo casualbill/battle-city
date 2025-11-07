@@ -64,9 +64,9 @@ export class GameTitleSceneContent extends React.PureComponent<
     if (choice === 'stage-list') {
       push('/list')
     } else if (choice === 'single-player') {
-      push('/choose')
+      push('/tank/choose')
     } else if (choice === 'multi-players') {
-      push(`/choose?${MULTI_PLAYERS_SEARCH_KEY}`)
+      push(`/tank/choose?${MULTI_PLAYERS_SEARCH_KEY}`)
     } else {
       push('/gallery')
     }

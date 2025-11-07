@@ -10,7 +10,7 @@ import * as selectors from '../utils/selectors'
 import playerController from './playerController'
 import playerTankSaga from './playerTankSaga'
 
-export default function* playerSaga(playerName: PlayerName, config: PlayerConfig) {
+export default function* playerSaga(playerName: PlayerName, config: PlayerConfig, tankType?: TankType) {
   yield takeEvery(A.StartStage, spawnPlayerTank)
   yield takeEvery(A.BeforeEndStage, reserveTankOnStageEnd)
   yield takeEvery(playerScoreIncremented, handleIncPlayerScore)
@@ -73,7 +73,30 @@ export default function* playerSaga(playerName: PlayerName, config: PlayerConfig
       tankPrototype = player.reservedTank
       yield put(actions.setReservedTank(playerName, null))
     } else if (player.lives > 0) {
-      tankPrototype = new TankRecord({ side: 'player', color: config.color })
+      // 根据坦克类型设置不同的属性
+      const tankTypeToUse = tankType || 'normal'
+      const tankProps: Partial<TankRecord> = { side: 'player', color: config.color, tankType: tankTypeToUse }
+      
+      // 根据坦克类型设置特殊属性
+      switch (tankTypeToUse) {
+        case 'heavy':
+          tankProps.hp = 2 // 重型坦克需要2次击中
+          break
+        case 'tankDestroyer':
+          // 坦克歼击车的属性将在子弹逻辑中处理
+          break
+        case 'light':
+          // 轻型坦克的属性将在移动和开火逻辑中处理
+          break
+        case 'selfPropelledGun':
+          // 自行火炮的属性将在子弹逻辑中处理
+          break
+        default:
+          // 普通坦克使用默认属性
+          break
+      }
+      
+      tankPrototype = new TankRecord(tankProps)
       yield put(actions.decrementPlayerLife(playerName))
     }
 

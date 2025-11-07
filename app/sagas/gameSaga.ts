@@ -81,9 +81,9 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
   yield delay(0)
   DEV.LOG && console.log('GAME STARTED')
 
-  const players = [playerSaga('player-1', PLAYER_CONFIGS.player1)]
+  const players = [playerSaga('player-1', PLAYER_CONFIGS.player1, action.tankTypes?.player1)]
   if (yield select(selectors.isInMultiPlayersMode)) {
-    players.push(playerSaga('player-2', PLAYER_CONFIGS.player2))
+    players.push(playerSaga('player-2', PLAYER_CONFIGS.player2, action.tankTypes?.player2))
   }
 
   const result = yield race({

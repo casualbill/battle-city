@@ -58,6 +58,7 @@ declare global {
 
   type TankLevel = 'basic' | 'fast' | 'power' | 'armor'
   type TankColor = 'green' | 'yellow' | 'silver' | 'red' | 'auto'
+  type TankType = 'normal' | 'heavy' | 'tankDestroyer' | 'light' | 'selfPropelledGun'
 
   type Direction = 'up' | 'down' | 'left' | 'right'
 
