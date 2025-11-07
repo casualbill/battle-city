@@ -4,6 +4,7 @@ import * as actions from '../utils/actions'
 import { A } from '../utils/actions'
 import canTankMove from '../utils/canTankMove'
 import { ceil8, floor8, getDirectionInfo, isPerpendicular, round8 } from '../utils/common'
+import { TANK_SIZE } from '../utils/constants'
 import values from '../utils/values'
 
 // 坦克进行转向时, 需要对坐标进行处理
@@ -41,9 +42,68 @@ export default function* directionController(
 
     if (input == null) {
       if (tank.moving) {
+        // 检查是否有暴雪事件，如果有，添加滑动效果
+        const currentEvent = yield select((s: State) => s.game.currentEvent)
+        if (currentEvent === 'blizzard') {
+          // 滑动1辆坦克的距离
+          const slideDistance = TANK_SIZE
+          const speed = values.moveSpeed(tank) * 0.8
+          const slideDuration = slideDistance / speed
+          
+          // 计算滑动后的位置
+          const { xy, updater } = getDirectionInfo(tank.direction)
+          let slideTank = tank
+          let totalSlide = 0
+          
+          // 模拟滑动过程
+          while (totalSlide < slideDistance) {
+            const { delta }: actions.Tick = yield take(A.Tick)
+            const slideLen = Math.min(delta * speed, slideDistance - totalSlide)
+            slideTank = slideTank.update(xy, updater(slideLen))
+            totalSlide += slideLen
+            
+            if (yield select(canTankMove, slideTank)) {
+              const reservedTank: TankRecord = yield getReservedTank(slideTank)
+              yield put(actions.move(slideTank.merge({ rx: reservedTank.x, ry: reservedTank.y })))
+            } else {
+              // 如果滑动过程中遇到障碍物，停止滑动
+              break
+            }
+          }
+        }
         yield put(actions.stopMove(tank.tankId))
       }
     } else if (input.type === 'turn') {
+      // 检查是否有暴雪事件，如果有，添加滑动效果
+      const currentEvent = yield select((s: State) => s.game.currentEvent)
+      if (currentEvent === 'blizzard') {
+        // 滑动1辆坦克的距离
+        const slideDistance = TANK_SIZE
+        const speed = values.moveSpeed(tank) * 0.8
+        const slideDuration = slideDistance / speed
+        
+        // 计算滑动后的位置
+        const { xy, updater } = getDirectionInfo(tank.direction)
+        let slideTank = tank
+        let totalSlide = 0
+        
+        // 模拟滑动过程
+        while (totalSlide < slideDistance) {
+          const { delta }: actions.Tick = yield take(A.Tick)
+          const slideLen = Math.min(delta * speed, slideDistance - totalSlide)
+          slideTank = slideTank.update(xy, updater(slideLen))
+          totalSlide += slideLen
+          
+          if (yield select(canTankMove, slideTank)) {
+            const reservedTank: TankRecord = yield getReservedTank(slideTank)
+            yield put(actions.move(slideTank.merge({ rx: reservedTank.x, ry: reservedTank.y })))
+          } else {
+            // 如果滑动过程中遇到障碍物，停止滑动
+            break
+          }
+        }
+      }
+      
       if (isPerpendicular(input.direction, tank.direction)) {
         yield put(actions.move(tank.useReservedXY().set('direction', input.direction)))
       } else {
@@ -51,7 +111,8 @@ export default function* directionController(
       }
     } else if (input.type === 'forward') {
       if (tank.frozenTimeout === 0) {
-        const speed = values.moveSpeed(tank)
+        const currentEvent = yield select((s: State) => s.game.currentEvent)
+        const speed = currentEvent === 'blizzard' ? values.moveSpeed(tank) * 0.8 : values.moveSpeed(tank)
         const distance = Math.min(delta * speed, input.maxDistance || Infinity)
 
         const { xy, updater } = getDirectionInfo(tank.direction)

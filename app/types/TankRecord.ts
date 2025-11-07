@@ -14,7 +14,6 @@ const TankRecordType = Record({
   color: 'auto' as TankColor,
   hp: 1,
   withPowerUp: false,
-
   // 坦克转弯预留位置的坐标
   rx: 0,
   ry: 0,

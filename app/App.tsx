@@ -27,7 +27,6 @@ class App extends React.PureComponent<{ game: GameRecord }> {
             <Route path="/editor" component={Editor} />
             <Route path="/gallery" component={Gallery} />
             <Route exact path="/gameover" component={GameoverScene} />
-            <Route
               exact
               path="/choose"
               render={({ location }) => <Redirect to={`/choose/${fsn}${location.search}`} />}

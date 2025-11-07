@@ -74,29 +74,6 @@ export default function* playerSaga(playerName: PlayerName, config: PlayerConfig
       yield put(actions.setReservedTank(playerName, null))
     } else if (player.lives > 0) {
       tankPrototype = new TankRecord({ side: 'player', color: config.color })
-      yield put(actions.decrementPlayerLife(playerName))
-    }
-
-    try {
-      if (tankPrototype) {
-        const tankId = getNextId('tank')
-        yield put(actions.setPlayerTankSpawningStatus(playerName, true))
-        yield spawnTank(
-          tankPrototype.merge({
-            tankId,
-            alive: true,
-            x: config.spawnPos.x,
-            y: config.spawnPos.y,
-            direction: 'up',
-            helmetDuration: frame(135),
-          }),
-        )
-        yield put(actions.activatePlayer(playerName, tankId))
-      }
-    } finally {
-      yield put(actions.setPlayerTankSpawningStatus(playerName, false))
-    }
-  }
 
   function* reserveTankOnStageEnd() {
     const state: State = yield select()

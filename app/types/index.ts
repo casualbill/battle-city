@@ -58,7 +58,6 @@ declare global {
 
   type TankLevel = 'basic' | 'fast' | 'power' | 'armor'
   type TankColor = 'green' | 'yellow' | 'silver' | 'red' | 'auto'
-
   type Direction = 'up' | 'down' | 'left' | 'right'
 
   type TankId = number
@@ -97,6 +96,8 @@ declare global {
       type: 'reach'
     }
   }
+
+  type EventType = 'tide' | 'blizzard' | 'bombing'
 
   type SoundName =
     | 'stage_start'

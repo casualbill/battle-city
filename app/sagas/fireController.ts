@@ -40,7 +40,6 @@ export default function* fireController(tankId: TankId, shouldFire: () => boolea
           tankId: tank.tankId,
           side: tank.side,
           playerName: yield select(selectors.playerName, tankId),
-        })
         yield put(actions.addBullet(bullet))
         // 一旦发射子弹, 则重置cooldown计数器
         nextCooldown = values.bulletInterval(tank)

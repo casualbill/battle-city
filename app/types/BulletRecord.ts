@@ -22,8 +22,6 @@ const BulletRecordBase = Record({
   side: 'player' as Side,
   // 发射子弹的玩家
   playerName: null as PlayerName,
-})
-
 export default class BulletRecord extends BulletRecordBase {
   static fromJS(object: any) {
     return new BulletRecord(object)

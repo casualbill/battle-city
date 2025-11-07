@@ -16,6 +16,10 @@ export default function mapReducer(state = initState, action: Action) {
     return state.update('steels', steels =>
       steels.map((set, t) => (action.ts.has(t) ? false : set)),
     )
+  } else if (action.type === A.RemoveForests) {
+    return state.update('forests', forests =>
+      forests.map((set, t) => (action.ts.has(t) ? false : set)),
+    )
   } else if (action.type === A.UpdateMap) {
     return action.map
   } else if (action.type === A.AddRestrictedArea) {
