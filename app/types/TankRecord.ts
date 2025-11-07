@@ -27,6 +27,10 @@ const TankRecordType = Record({
   cooldown: 0,
   // player tank被队友击中时无法移动，此时坦克会闪烁，该变量用来记录坦克是否可见
   visible: true,
+  // 坦克在沼泽中的减速效果
+  inSwamp: false,
+  // 坦克在沼泽中的转向延迟
+  turnDelay: 0,
 })
 
 export default class TankRecord extends TankRecordType {

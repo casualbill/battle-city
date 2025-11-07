@@ -55,14 +55,6 @@ const GameRecordBase = Record(
 
     /** stage-enter-curtain相关字段 */
     stageEnterCurtainT: 0,
-  },
-  'GameRecord',
-)
-
-// TODO 需要重构 game-record 的结构
-export class GameRecord extends GameRecordBase {}
-
-export default function game(state = new GameRecord(), action: Action) {
   if (action.type === A.StartGame) {
     return state
       .set('status', 'on')
