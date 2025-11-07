@@ -19,20 +19,28 @@ function* handleTankPickPowerUps(tankId: TankId) {
 }
 
 export default function* playerTankSaga(playerName: PlayerName, tankId: TankId) {
-  const { hit: hitAction }: { hit: actions.Hit } = yield race({
-    service: service(),
-    hit: take(hitByBotPredicate),
-  })
+  while (true) {
+    const { hit: hitAction }: { hit: actions.Hit } = yield race({
+      service: service(),
+      hit: take(hitByBotPredicate),
+    })
 
-  const tank: TankRecord = yield select(selectors.tank, tankId)
-  DEV.ASSERT && console.assert(tank != null && tank.hp === 1)
-  DEV.ASSERT && console.assert(hitAction.sourceTank.side === 'bot')
-  // 玩家的坦克 HP 始终为 1. 一旦被 bot 击中就需要派发 KILL
-  const { sourceTank, targetTank } = hitAction
-  yield put(actions.kill(targetTank, sourceTank, 'bullet'))
-  yield put(actions.setTankToDead(tank.tankId))
-  yield explosionFromTank(tank)
-  return true
+    const tank: TankRecord = yield select(selectors.tank, tankId)
+    DEV.ASSERT && console.assert(tank != null && tank.hp === 1)
+    DEV.ASSERT && console.assert(hitAction.sourceTank.side === 'bot')
+    
+    // 检查能量盾状态，如果处于能量盾状态则忽略伤害
+    if (tank.shieldDuration > 0) {
+      continue
+    }
+    
+    // 玩家的坦克 HP 始终为 1. 一旦被 bot 击中就需要派发 KILL
+    const { sourceTank, targetTank } = hitAction
+    yield put(actions.kill(targetTank, sourceTank, 'bullet'))
+    yield put(actions.setTankToDead(tank.tankId))
+    yield explosionFromTank(tank)
+    return true
+  }
 
   function hitByTeammatePredicate(action: actions.Action) {
     return (

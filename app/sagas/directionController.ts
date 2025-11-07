@@ -51,7 +51,11 @@ export default function* directionController(
       }
     } else if (input.type === 'forward') {
       if (tank.frozenTimeout === 0) {
-        const speed = values.moveSpeed(tank)
+        let speed = values.moveSpeed(tank)
+        // 如果处于液氮冲刺状态，速度增加200%
+        if (tank.boostDuration > 0) {
+          speed *= 2
+        }
         const distance = Math.min(delta * speed, input.maxDistance || Infinity)
 
         const { xy, updater } = getDirectionInfo(tank.direction)

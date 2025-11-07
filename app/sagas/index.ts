@@ -3,6 +3,7 @@ import * as actions from '../utils/actions'
 import { A } from '../utils/actions'
 import gameSaga from './gameSaga'
 import soundManager from './soundManager'
+import skillsSaga from './skillsSaga'
 import { syncFrom, syncTo } from './syncLocalStorage'
 
 export default function* rootSaga() {
@@ -10,6 +11,7 @@ export default function* rootSaga() {
 
   yield syncFrom()
   yield fork(soundManager)
+  yield fork(skillsSaga)
   yield takeEvery(A.SyncCustomStages, syncTo)
   yield takeLatest([A.StartGame, A.ResetGame], gameSaga)
 

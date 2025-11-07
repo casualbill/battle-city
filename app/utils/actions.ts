@@ -98,6 +98,15 @@ export enum A {
   RemoveCustomStage = 'RemoveCustomStage',
   SetEditorContent = 'SetEditorContent',
   SyncCustomStages = 'SyncCustomStages',
+  // 技能相关action
+  FireLaser = 'FireLaser',
+  SetLaserCooldown = 'SetLaserCooldown',
+  ActivateShield = 'ActivateShield',
+  SetShieldCooldown = 'SetShieldCooldown',
+  SetShieldDuration = 'SetShieldDuration',
+  ActivateBoost = 'ActivateBoost',
+  SetBoostCooldown = 'SetBoostCooldown',
+  SetBoostDuration = 'SetBoostDuration',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
 }
@@ -184,7 +193,7 @@ export function hurt(targetTank: TankRecord) {
 }
 
 export type Kill = ReturnType<typeof kill>
-export function kill(targetTank: TankRecord, sourceTank: TankRecord, method: 'bullet' | 'grenade') {
+export function kill(targetTank: TankRecord, sourceTank: TankRecord, method: 'bullet' | 'grenade' | 'laser') {
   return {
     type: A.Kill as A.Kill,
     targetTank,
@@ -233,6 +242,75 @@ export function setCooldown(tankId: TankId, cooldown: number) {
     type: A.SetCooldown as A.SetCooldown,
     tankId,
     cooldown,
+  }
+}
+
+export type FireLaser = ReturnType<typeof fireLaser>
+export function fireLaser(tankId: TankId) {
+  return {
+    type: A.FireLaser as A.FireLaser,
+    tankId,
+  }
+}
+
+export type SetLaserCooldown = ReturnType<typeof setLaserCooldown>
+export function setLaserCooldown(tankId: TankId, cooldown: number) {
+  return {
+    type: A.SetLaserCooldown as A.SetLaserCooldown,
+    tankId,
+    cooldown,
+  }
+}
+
+export type ActivateShield = ReturnType<typeof activateShield>
+export function activateShield(tankId: TankId) {
+  return {
+    type: A.ActivateShield as A.ActivateShield,
+    tankId,
+  }
+}
+
+export type SetShieldCooldown = ReturnType<typeof setShieldCooldown>
+export function setShieldCooldown(tankId: TankId, cooldown: number) {
+  return {
+    type: A.SetShieldCooldown as A.SetShieldCooldown,
+    tankId,
+    cooldown,
+  }
+}
+
+export type SetShieldDuration = ReturnType<typeof setShieldDuration>
+export function setShieldDuration(tankId: TankId, duration: number) {
+  return {
+    type: A.SetShieldDuration as A.SetShieldDuration,
+    tankId,
+    duration,
+  }
+}
+
+export type ActivateBoost = ReturnType<typeof activateBoost>
+export function activateBoost(tankId: TankId) {
+  return {
+    type: A.ActivateBoost as A.ActivateBoost,
+    tankId,
+  }
+}
+
+export type SetBoostCooldown = ReturnType<typeof setBoostCooldown>
+export function setBoostCooldown(tankId: TankId, cooldown: number) {
+  return {
+    type: A.SetBoostCooldown as A.SetBoostCooldown,
+    tankId,
+    cooldown,
+  }
+}
+
+export type SetBoostDuration = ReturnType<typeof setBoostDuration>
+export function setBoostDuration(tankId: TankId, duration: number) {
+  return {
+    type: A.SetBoostDuration as A.SetBoostDuration,
+    tankId,
+    duration,
   }
 }
 
@@ -761,5 +839,13 @@ export type Action =
   | RemoveCustomStage
   | SetEditorContent
   | SyncCustomStages
+  | FireLaser
+  | SetLaserCooldown
+  | ActivateShield
+  | SetShieldCooldown
+  | SetShieldDuration
+  | ActivateBoost
+  | SetBoostCooldown
+  | SetBoostDuration
   | LeaveGameScene
   | PlaySound
