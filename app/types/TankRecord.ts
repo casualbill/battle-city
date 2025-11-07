@@ -25,16 +25,16 @@ const TankRecordType = Record({
   frozenTimeout: 0,
   // cooldown小于等于0表示可以进行开火, 大于0表示还需要等待cooldown毫秒才能进行开火
   cooldown: 0,
-  // player tank被队友击中时无法移动，此时坦克会闪烁，该变量用来记录坦克是否可见
-  visible: true,
-})
-
-export default class TankRecord extends TankRecordType {
-  static fromJS(object: any) {
-    return new TankRecord(object)
-  }
-
-  useReservedXY() {
+  // 特殊坦克相关字段
+  // 自爆坦克：是否已经自爆
+  exploded: false,
+  // 隐形坦克：隐形状态和倒计时
+  invisible: false,
+  invisibleTimeout: 0,
+  invisibleCooldown: 0,
+  // 工程坦克：是否正在建造砖墙
+  building: false,
+  buildingTimeout: 0,
     return this.merge({ x: this.rx, y: this.ry })
   }
 }

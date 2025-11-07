@@ -52,10 +52,6 @@ export default function* directionController(
     } else if (input.type === 'forward') {
       if (tank.frozenTimeout === 0) {
         const speed = values.moveSpeed(tank)
-        const distance = Math.min(delta * speed, input.maxDistance || Infinity)
-
-        const { xy, updater } = getDirectionInfo(tank.direction)
-        const movedTank = tank.update(xy, updater(distance))
         if (yield select(canTankMove, movedTank)) {
           const reservedTank: TankRecord = yield getReservedTank(movedTank)
           yield put(actions.move(movedTank.merge({ rx: reservedTank.x, ry: reservedTank.y })))

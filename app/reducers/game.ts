@@ -55,6 +55,8 @@ const GameRecordBase = Record(
 
     /** stage-enter-curtain相关字段 */
     stageEnterCurtainT: 0,
+    /** 特殊坦克已出现的数量 */
+    specialTankCount: 0,
   },
   'GameRecord',
 )
@@ -87,6 +89,7 @@ export default function game(state = new GameRecord(), action: Action) {
       killInfo: Map(),
       remainingBots: action.stage.bots.flatMap(BotGroupConfig.unwind),
       showTotalKillCount: false,
+      specialTankCount: 0,
     })
   } else if (action.type === A.EndStage) {
     return state.set('currentStageName', null)
@@ -97,6 +100,8 @@ export default function game(state = new GameRecord(), action: Action) {
     return state.updateIn(['killInfo', playerName, level], x => (x == null ? 1 : x + 1))
   } else if (action.type === A.UpdateTransientKillInfo) {
     return state.set('transientKillInfo', action.info)
+  } else if (action.type === A.IncSpecialTankCount) {
+    return state.update('specialTankCount', count => count + 1)
   } else if (action.type === A.ShowTotalKillCount) {
     return state.set('showTotalKillCount', true)
   } else if (action.type === A.SetBotFrozenTimeout) {

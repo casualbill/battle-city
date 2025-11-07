@@ -23,7 +23,7 @@ export default function* playerTankSaga(playerName: PlayerName, tankId: TankId) 
     service: service(),
     hit: take(hitByBotPredicate),
   })
-
+  const tank: TankRecord = yield select(selectors.tank, tankId)
   const tank: TankRecord = yield select(selectors.tank, tankId)
   DEV.ASSERT && console.assert(tank != null && tank.hp === 1)
   DEV.ASSERT && console.assert(hitAction.sourceTank.side === 'bot')
@@ -33,14 +33,6 @@ export default function* playerTankSaga(playerName: PlayerName, tankId: TankId) 
   yield put(actions.setTankToDead(tank.tankId))
   yield explosionFromTank(tank)
   return true
-
-  function hitByTeammatePredicate(action: actions.Action) {
-    return (
-      action.type === A.Hit &&
-      action.targetTank.tankId === tankId &&
-      action.sourceTank.side === 'player'
-    )
-  }
 
   function* service() {
     yield takeEvery(A.AfterTick, handleTankPickPowerUps, tankId)

@@ -20,8 +20,14 @@ namespace values {
         return 0.045
       } else if (tank.level === 'fast') {
         return 0.06
+      } else if (tank.level === 'suicide') {
+        // 自爆坦克速度为玩家的1.5倍
+        return DEV.FAST ? 0.09 : 0.0675
+      } else if (tank.level === 'engineer') {
+        // 工程坦克速度为玩家的0.8倍
+        return DEV.FAST ? 0.048 : 0.036
       } else {
-        // baisc or armor
+        // basic, armor or stealth
         return 0.03
       }
     }
@@ -37,7 +43,10 @@ namespace values {
   }
 
   export function bulletLimit(tank: TankRecord) {
-    if (tank.side === 'bot' || tank.level === 'basic' || tank.level === 'fast') {
+    if (tank.level === 'suicide' || tank.level === 'engineer') {
+      // 自爆坦克和工程坦克不能发射炮弹
+      return 0
+    } else if (tank.side === 'bot' || tank.level === 'basic' || tank.level === 'fast') {
       return 1
     } else {
       return 2

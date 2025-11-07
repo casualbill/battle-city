@@ -56,7 +56,7 @@ declare global {
 
   type PowerUpName = 'tank' | 'star' | 'grenade' | 'timer' | 'helmet' | 'shovel'
 
-  type TankLevel = 'basic' | 'fast' | 'power' | 'armor'
+  type TankLevel = 'basic' | 'fast' | 'power' | 'armor' | 'suicide' | 'stealth' | 'engineer'
   type TankColor = 'green' | 'yellow' | 'silver' | 'red' | 'auto'
 
   type Direction = 'up' | 'down' | 'left' | 'right'

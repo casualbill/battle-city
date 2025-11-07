@@ -12,9 +12,6 @@ import fireController from './fireController'
 export default function* playerController(tankId: TankId, config: PlayerConfig) {
   let firePressing = false // 用来记录当前玩家是否按下了fire键
   let firePressed = false // 用来记录上一个tick内 玩家是否按下过fire键
-  const pressed: Direction[] = [] // 用来记录上一个tick内, 玩家按下过的方向键
-
-  try {
     document.addEventListener('keydown', onKeyDown)
     document.addEventListener('keyup', onKeyUp)
     yield all([
@@ -24,7 +21,6 @@ export default function* playerController(tankId: TankId, config: PlayerConfig) 
     ])
   } finally {
     document.removeEventListener('keydown', onKeyDown)
-    document.removeEventListener('keyup', onKeyUp)
   }
 
   // region function-definitions
@@ -51,12 +47,6 @@ export default function* playerController(tankId: TankId, config: PlayerConfig) 
   }
 
   function onKeyUp(event: KeyboardEvent) {
-    const code = event.code
-    if (code === config.control.fire) {
-      firePressing = false
-    } else if (code === config.control.left) {
-      pull(pressed, 'left')
-    } else if (code === config.control.right) {
       pull(pressed, 'right')
     } else if (code === config.control.up) {
       pull(pressed, 'up')
