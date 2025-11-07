@@ -9,6 +9,11 @@ const MapRecordBase = Record({
   rivers: Repeat(false, N_MAP.RIVER ** 2).toList(),
   snows: Repeat(false, N_MAP.SNOW ** 2).toList(),
   forests: Repeat(false, N_MAP.FOREST ** 2).toList(),
+  swamps: Repeat(false, N_MAP.SWAMP ** 2).toList(),
+  mountains: Repeat(false, N_MAP.MOUNTAIN ** 2).toList(),
+  teleporters: Repeat(false, N_MAP.TELEPORTER ** 2).toList(),
+  glasses: Repeat(false, N_MAP.GLASS ** 2).toList(),
+  mines: Repeat(false, N_MAP.MINE ** 2).toList(),
   restrictedAreas: IMap<AreaId, Rect>(),
 })
 
@@ -21,6 +26,11 @@ export default class MapRecord extends MapRecordBase {
       .update('rivers', List)
       .update('snows', List)
       .update('forests', List)
+      .update('swamps', List)
+      .update('mountains', List)
+      .update('teleporters', List)
+      .update('glasses', List)
+      .update('mines', List)
       .update('restrictedAreas', IMap)
   }
 }

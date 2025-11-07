@@ -31,6 +31,8 @@ export enum A {
   RemoveBullet = 'RemoveBullet',
   RemoveSteels = 'RemoveSteels',
   RemoveBricks = 'RemoveBricks',
+  RemoveGlasses = 'RemoveGlasses',
+  RemoveMines = 'RemoveMines',
   UpdateMap = 'UpdateMap',
   UpdateBullets = 'UpdateBullets',
   LoadStageMap = 'LoadStageMap',
@@ -100,12 +102,6 @@ export enum A {
   SyncCustomStages = 'SyncCustomStages',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
-}
-
-export type Move = ReturnType<typeof move>
-export function move(tank: TankRecord) {
-  return {
-    type: A.Move as A.Move,
     tankId: tank.tankId,
     x: tank.x,
     y: tank.y,
@@ -272,6 +268,22 @@ export type RemoveBricks = ReturnType<typeof removeBricks>
 export function removeBricks(ts: Set<BrickIndex>) {
   return {
     type: A.RemoveBricks as A.RemoveBricks,
+    ts,
+  }
+}
+
+export type RemoveGlasses = ReturnType<typeof removeGlasses>
+export function removeGlasses(ts: Set<GlassIndex>) {
+  return {
+    type: A.RemoveGlasses as A.RemoveGlasses,
+    ts,
+  }
+}
+
+export type RemoveMines = ReturnType<typeof removeMines>
+export function removeMines(ts: Set<MineIndex>) {
+  return {
+    type: A.RemoveMines as A.RemoveMines,
     ts,
   }
 }
@@ -684,56 +696,7 @@ export const leaveGameScene = () => ({ type: A.LeaveGameScene as A.LeaveGameScen
 export type Action =
   | Move
   | StartMove
-  | Tick
-  | AfterTick
-  | AddBullet
-  | SetCooldown
-  | SetHelmetDuration
-  | SetFrozenTimeout
-  | SetBotFrozenTimeout
-  | BeforeRemoveBullet
-  | RemoveBullet
-  | RemoveSteels
-  | RemoveBricks
-  | UpdateMap
-  | UpdateBulelts
-  | LoadStageMap
-  | BeforeStartStage
-  | StartStage
-  | BeforeEndStage
-  | EndStage
-  | BeforeEndGame
-  | EndGame
-  | StartGame
-  | ResetGame
-  | GamePause
-  | GameResume
-  | ShowHud
-  | HideHud
-  | ShowStatistics
-  | HideStatistics
-  | RemoveFirstRemainingBot
-  | IncrementPlayerLife
-  | DecrementPlayerLife
-  | BorrowPlayerLife
-  | ActivatePlayer
-  | ReqAddPlayerTank
-  | ReqAddBot
-  | SetExplosion
-  | RemoveExplosion
-  | SetText
-  | MoveTexts
-  | DestroyEagle
-  | StartSpawnTank
-  | SetPlayerTankSpawningStatus
-  | SetIsSpawningBotTank
-  | AddTank
-  | SetTankToDead
-  | StopMove
-  | RemoveText
-  | RemoveFlicker
-  | SetFlicker
-  | Hit
+export type LeaveGameScene = ReturnType<typeof leaveGameScene>
   | Hurt
   | Kill
   | IncKillCount

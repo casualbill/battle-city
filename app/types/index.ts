@@ -97,8 +97,6 @@ declare global {
       type: 'reach'
     }
   }
-
-  type SoundName =
     | 'stage_start'
     | 'game_over'
     | 'bullet_shot'

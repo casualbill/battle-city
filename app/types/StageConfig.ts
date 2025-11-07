@@ -4,7 +4,7 @@ import { or } from '../utils/common'
 import { BLOCK_SIZE, FIELD_BLOCK_SIZE, N_MAP } from '../utils/constants'
 import IndexHelper from '../utils/IndexHelper'
 
-export type MapItemType = 'X' | 'E' | 'B' | 'T' | 'R' | 'S' | 'F'
+export type MapItemType = 'X' | 'E' | 'B' | 'T' | 'R' | 'S' | 'F' | 'W' | 'M' | 'P' | 'G' | 'I'
 
 const MapItemRecord = Record({
   type: 'X' as MapItemType,
@@ -45,6 +45,16 @@ function serializeMapItemList(list: List<MapItem>): string[] {
         }
       } else if (type === 'F') {
         array.push('F')
+      } else if (type === 'W') {
+        array.push('W')
+      } else if (type === 'M') {
+        array.push('M')
+      } else if (type === 'P') {
+        array.push('P')
+      } else if (type === 'G') {
+        array.push('G')
+      } else if (type === 'I') {
+        array.push('I')
       } else {
         array.push('X')
       }
@@ -171,6 +181,11 @@ export default class StageConfig extends StageConfigRecord {
     const rivers = new Set<number>()
     const snows = new Set<number>()
     const forests = new Set<number>()
+    const swamps = new Set<number>()
+    const mountains = new Set<number>()
+    const teleporters = new Set<number>()
+    const glasses = new Set<number>()
+    const mines = new Set<number>()
     let eaglePos: Point = null
     for (let row = 0; row < FIELD_BLOCK_SIZE; row += 1) {
       const line = map[row].toLowerCase().split(/ +/)
@@ -227,6 +242,16 @@ export default class StageConfig extends StageConfigRecord {
           forests.add(row * FIELD_BLOCK_SIZE + col)
         } else if (item[0] === 's') {
           snows.add(row * FIELD_BLOCK_SIZE + col)
+        } else if (item[0] === 'w') {
+          swamps.add(row * FIELD_BLOCK_SIZE + col)
+        } else if (item[0] === 'm') {
+          mountains.add(row * FIELD_BLOCK_SIZE + col)
+        } else if (item[0] === 'p') {
+          teleporters.add(row * FIELD_BLOCK_SIZE + col)
+        } else if (item[0] === 'g') {
+          glasses.add(row * FIELD_BLOCK_SIZE + col)
+        } else if (item[0] === 'i') {
+          mines.add(row * FIELD_BLOCK_SIZE + col)
         } else if (item[0] === 'e') {
           if (eaglePos != null) {
             throw new Error('Eagle appears more than once')
@@ -248,8 +273,7 @@ export default class StageConfig extends StageConfigRecord {
             x: eaglePos.x,
             y: eaglePos.y,
             broken: false,
-          })
-        : null,
+          }) : null,
       bricks: Repeat(false, N_MAP.BRICK ** 2)
         .map((set, index) => bricks.has(index))
         .toList(),
@@ -265,6 +289,22 @@ export default class StageConfig extends StageConfigRecord {
       forests: Repeat(false, N_MAP.FOREST ** 2)
         .map((set, index) => forests.has(index))
         .toList(),
+      swamps: Repeat(false, N_MAP.SWAMP ** 2)
+        .map((set, index) => swamps.has(index))
+        .toList(),
+      mountains: Repeat(false, N_MAP.MOUNTAIN ** 2)
+        .map((set, index) => mountains.has(index))
+        .toList(),
+      teleporters: Repeat(false, N_MAP.TELEPORTER ** 2)
+        .map((set, index) => teleporters.has(index))
+        .toList(),
+      glasses: Repeat(false, N_MAP.GLASS ** 2)
+        .map((set, index) => glasses.has(index))
+        .toList(),
+      mines: Repeat(false, N_MAP.MINE ** 2)
+        .map((set, index) => mines.has(index))
+        .toList(),
+      restrictedAreas: IMap(),
     })
   }
 
@@ -292,7 +332,7 @@ export namespace StageConfigConverter {
   export function s2e(stage: StageConfig): EditorStageConfig {
     const items = new Array<MapItem>(FIELD_BLOCK_SIZE ** 2)
     items.fill(new MapItem())
-    const { bricks, steels, snows, forests, rivers, eagle } = stage.map
+    const { bricks, steels, snows, forests, rivers, swamps, mountains, teleporters, glasses, mines, eagle } = stage.map
     bricks.forEach((set, brickT) => {
       if (set) {
         const [brickRow, brickCol] = IndexHelper.getRowCol('brick', brickT)
@@ -325,6 +365,21 @@ export namespace StageConfigConverter {
     })
     snows.forEach((set, t) => {
       if (set) items[t] = new MapItem({ type: 'S' })
+    })
+    swamps.forEach((set, t) => {
+      if (set) items[t] = new MapItem({ type: 'W' })
+    })
+    mountains.forEach((set, t) => {
+      if (set) items[t] = new MapItem({ type: 'M' })
+    })
+    teleporters.forEach((set, t) => {
+      if (set) items[t] = new MapItem({ type: 'P' })
+    })
+    glasses.forEach((set, t) => {
+      if (set) items[t] = new MapItem({ type: 'G' })
+    })
+    mines.forEach((set, t) => {
+      if (set) items[t] = new MapItem({ type: 'I' })
     })
 
     if (eagle != null) {

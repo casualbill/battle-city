@@ -16,10 +16,14 @@ export default function mapReducer(state = initState, action: Action) {
     return state.update('steels', steels =>
       steels.map((set, t) => (action.ts.has(t) ? false : set)),
     )
-  } else if (action.type === A.UpdateMap) {
-    return action.map
-  } else if (action.type === A.AddRestrictedArea) {
-    return state.update('restrictedAreas', areas => areas.set(action.areaId, action.area))
+  } else if (action.type === A.RemoveGlasses) {
+    return state.update('glasses', glasses =>
+      glasses.map((set, t) => (action.ts.has(t) ? false : set)),
+    )
+  } else if (action.type === A.RemoveMines) {
+    return state.update('mines', mines =>
+      mines.map((set, t) => (action.ts.has(t) ? false : set)),
+    )
   } else if (action.type === A.RemoveRestrictedArea) {
     return state.update('restrictedAreas', areas => areas.delete(action.areaId))
   } else {

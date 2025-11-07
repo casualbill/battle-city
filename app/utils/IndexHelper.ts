@@ -1,7 +1,7 @@
 import range from 'lodash/range'
 import { ITEM_SIZE_MAP, N_MAP } from './constants'
 
-export type ItemType = 'brick' | 'steel' | 'river' | 'snow' | 'forest'
+export type ItemType = 'brick' | 'steel' | 'river' | 'snow' | 'forest' | 'swamp' | 'mountain' | 'teleporter' | 'glass' | 'mine'
 
 export default class IndexHelper {
   static resolveN(type: ItemType) {

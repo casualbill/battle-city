@@ -46,7 +46,7 @@ export class BulletCollisionInfo extends DefaultMap<BulletId, Collision[]> {
       width: -FIELD_SIZE,
       height: -FIELD_SIZE,
     }
-    if (collision.type === 'brick' || collision.type === 'steel') {
+    if (collision.type === 'brick' || collision.type === 'steel' || collision.type === 'mountain' || collision.type === 'glass' || collision.type === 'teleporter' || collision.type === 'mine') {
       return IndexHelper.getRect(collision.type, collision.t)
     } else if (collision.type === 'border') {
       return borderCollisionRect
@@ -68,6 +68,8 @@ export class BulletCollisionInfo extends DefaultMap<BulletId, Collision[]> {
         c.type === 'eagle' ||
         c.type === 'brick' ||
         c.type === 'steel' ||
+        c.type === 'mountain' ||
+        c.type === 'glass' ||
         (c.type === 'tank' && c.shouldExplode)
       ) {
         return true

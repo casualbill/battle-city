@@ -7,6 +7,10 @@ type Collision =
   | CollisionWithTank
   | CollisionWithBullet
   | CollisionWithEagle
+  | CollisionWithMountain
+  | CollisionWithGlass
+  | CollisionWithTeleporter
+  | CollisionWithMine
 
 export interface CollisionWithBrick {
   type: 'brick'
@@ -44,6 +48,26 @@ export interface CollisionWithBullet {
 export interface CollisionWithEagle {
   type: 'eagle'
   eagle: EagleRecord
+}
+
+export interface CollisionWithMountain {
+  type: 'mountain'
+  t: number
+}
+
+export interface CollisionWithGlass {
+  type: 'glass'
+  t: number
+}
+
+export interface CollisionWithTeleporter {
+  type: 'teleporter'
+  t: number
+}
+
+export interface CollisionWithMine {
+  type: 'mine'
+  t: number
 }
 
 export default Collision
