@@ -98,15 +98,7 @@ export enum A {
   RemoveCustomStage = 'RemoveCustomStage',
   SetEditorContent = 'SetEditorContent',
   SyncCustomStages = 'SyncCustomStages',
-  LeaveGameScene = 'LeaveGameScene',
-  PlaySound = 'PlaySound',
-}
-
-export type Move = ReturnType<typeof move>
-export function move(tank: TankRecord) {
-  return {
-    type: A.Move as A.Move,
-    tankId: tank.tankId,
+  IncSpecialTankCount = 'IncSpecialTankCount',
     x: tank.x,
     y: tank.y,
     rx: tank.rx,
@@ -193,7 +185,7 @@ export function kill(targetTank: TankRecord, sourceTank: TankRecord, method: 'bu
   }
 }
 
-export type UpdateTransientKillInfo = ReturnType<typeof updateTransientKillInfo>
+export function kill(targetTank: TankRecord, sourceTank: TankRecord, method: 'bullet' | 'grenade') {
 export function updateTransientKillInfo(info: Map<PlayerName, Map<TankLevel, number>>) {
   return {
     type: A.UpdateTransientKillInfo as A.UpdateTransientKillInfo,
@@ -245,75 +237,6 @@ export function setBotFrozenTimeout(timeout: number) {
 }
 
 export type BeforeRemoveBullet = ReturnType<typeof beforeRemoveBullet>
-export function beforeRemoveBullet(bulletId: BulletId) {
-  return {
-    type: A.BeforeRemoveBullet as A.BeforeRemoveBullet,
-    bulletId,
-  }
-}
-
-export type RemoveBullet = ReturnType<typeof removeBullet>
-export function removeBullet(bulletId: BulletId) {
-  return {
-    type: A.RemoveBullet as A.RemoveBullet,
-    bulletId,
-  }
-}
-
-export type RemoveSteels = ReturnType<typeof removeSteels>
-export function removeSteels(ts: Set<SteelIndex>) {
-  return {
-    type: A.RemoveSteels as A.RemoveSteels,
-    ts,
-  }
-}
-
-export type RemoveBricks = ReturnType<typeof removeBricks>
-export function removeBricks(ts: Set<BrickIndex>) {
-  return {
-    type: A.RemoveBricks as A.RemoveBricks,
-    ts,
-  }
-}
-
-export type UpdateMap = ReturnType<typeof updateMap>
-export function updateMap(map: MapRecord) {
-  return {
-    type: A.UpdateMap as A.UpdateMap,
-    map,
-  }
-}
-
-export type UpdateBulelts = ReturnType<typeof updateBullets>
-export function updateBullets(updatedBullets: Map<BulletId, BulletRecord>) {
-  return {
-    type: A.UpdateBullets as A.UpdateBullets,
-    updatedBullets,
-  }
-}
-
-export type LoadStageMap = ReturnType<typeof loadStageMap>
-export function loadStageMap(stage: StageConfig) {
-  return {
-    type: A.LoadStageMap as A.LoadStageMap,
-    stage,
-  }
-}
-
-export type UpdateComingStageName = ReturnType<typeof updateComingStageName>
-export function updateComingStageName(stageName: string) {
-  return {
-    type: A.UpdateComingStageName as A.UpdateComingStageName,
-    stageName,
-  }
-}
-
-export type BeforeStartStage = ReturnType<typeof beforeStartStage>
-export function beforeStartStage(stage: StageConfig) {
-  return {
-    type: A.BeforeStartStage as A.BeforeStartStage,
-    stage,
-  }
 }
 
 export type StartStage = ReturnType<typeof startStage>
@@ -681,6 +604,9 @@ export const syncCustomStages = () => ({ type: A.SyncCustomStages as A.SyncCusto
 export type LeaveGameScene = ReturnType<typeof leaveGameScene>
 export const leaveGameScene = () => ({ type: A.LeaveGameScene as A.LeaveGameScene })
 
+export type IncSpecialTankCount = ReturnType<typeof incSpecialTankCount>
+export const incSpecialTankCount = () => ({ type: A.IncSpecialTankCount as A.IncSpecialTankCount })
+
 export type Action =
   | Move
   | StartMove
@@ -762,4 +688,5 @@ export type Action =
   | SetEditorContent
   | SyncCustomStages
   | LeaveGameScene
+  | IncSpecialTankCount
   | PlaySound

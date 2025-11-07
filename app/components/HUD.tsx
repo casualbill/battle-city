@@ -2,7 +2,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { State } from '../types'
 import PlayerRecord from '../types/PlayerRecord'
-import { BLOCK_SIZE as B, FIELD_SIZE } from '../utils/constants'
 import * as selectors from '../utils/selectors'
 import BotCountIndicator from './BotCountIndicator'
 import { PlayerTankThumbnail } from './icons'
@@ -15,8 +14,6 @@ interface HUDContentProps {
   player1: PlayerRecord
   player2: PlayerRecord
   show: boolean
-  inMultiPlayersMode: boolean
-}
 
 export class HUDContent extends React.PureComponent<HUDContentProps> {
   renderPlayer1Info() {

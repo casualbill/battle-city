@@ -54,6 +54,9 @@ export const TANK_KILL_SCORE_MAP = {
   fast: 200,
   power: 300,
   armor: 400,
+  suicide: 200, // 普通坦克的2倍
+  stealth: 400, // 普通坦克的2倍
+  engineer: 600, // 普通坦克的2倍
 }
 
 /** 物体的大小(边长) */

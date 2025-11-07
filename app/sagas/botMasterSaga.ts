@@ -24,8 +24,18 @@ function* addBotHelper() {
           spawnPos = yield select(selectors.availableSpawnPosition)
         }
         yield put(actions.removeFirstRemainingBot())
-        const level = game.remainingBots.first()
+        let level = game.remainingBots.first()
         const hp = level === 'armor' ? 4 : 1
+        
+        // 有一定概率生成特殊坦克，累计不超过5次
+        const specialTanks: TankLevel[] = ['suicide', 'stealth', 'engineer']
+        if (game.specialTankCount < 5 && Math.random() < 0.3) {
+          // 随机选择一种特殊坦克类型
+          level = specialTanks[Math.floor(Math.random() * specialTanks.length)]
+          // 增加特殊坦克计数
+          yield put(actions.incSpecialTankCount())
+        }
+        
         const tank = new TankRecord({
           tankId: getNextId('tank'),
           x: spawnPos.x,
