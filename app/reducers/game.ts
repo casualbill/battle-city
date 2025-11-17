@@ -55,6 +55,12 @@ const GameRecordBase = Record(
 
     /** stage-enter-curtain相关字段 */
     stageEnterCurtainT: 0,
+    
+    /** 动态地图模式相关 */
+    isDynamicMap: false,
+    dynamicMapDifficulty: 'normal' as 'easy' | 'normal' | 'hard',
+    surviveTime: 0,
+    totalEnemiesKilled: 0,
   },
   'GameRecord',
 )
@@ -68,6 +74,10 @@ export default function game(state = new GameRecord(), action: Action) {
       .set('status', 'on')
       .set('currentStageName', null)
       .set('playersScores', defaultPlayerScores)
+      .set('isDynamicMap', action.isDynamicMap)
+      .set('dynamicMapDifficulty', action.dynamicDifficulty)
+      .set('surviveTime', 0)
+      .set('totalEnemiesKilled', 0)
   } else if (action.type === A.ResetGame) {
     return state.set('status', 'idle').set('currentStageName', null)
   } else if (action.type === A.ShowStatistics) {
@@ -119,6 +129,10 @@ export default function game(state = new GameRecord(), action: Action) {
     )
   } else if (action.type === A.SetIsSpawningBotTank) {
     return state.set('isSpawningBotTank', action.isSpawning)
+  } else if (action.type === A.UpdateSurviveTime) {
+    return state.set('surviveTime', action.time)
+  } else if (action.type === A.IncTotalEnemiesKilled) {
+    return state.update('totalEnemiesKilled', count => count + 1)
   } else {
     return state
   }

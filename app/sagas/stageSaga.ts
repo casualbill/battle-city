@@ -9,6 +9,7 @@ import { frame as f } from '../utils/common'
 import * as selectors from '../utils/selectors'
 import Timing from '../utils/Timing'
 import animateStatistics from './animateStatistics'
+import { generateInitialDynamicMap, evolveDynamicMap } from '../utils/dynamic-map-utils'
 
 function* animateCurtainAndLoadMap(stage: StageConfig) {
   try {
@@ -33,6 +34,27 @@ function* animateCurtainAndLoadMap(stage: StageConfig) {
   }
 }
 
+function* loadDynamicMap(difficulty: 'easy' | 'normal' | 'hard') {
+  try {
+    yield put(actions.updateCurtain('stage-enter-curtain', 0))
+    yield* Timing.tween(f(30), t => put(actions.updateCurtain('stage-enter-curtain', t)))
+
+    // 在幕布完全将舞台遮起来的时候载入地图
+    yield Timing.delay(f(20))
+    yield put(actions.playSound('stage_start'))
+    const initialMap = generateInitialDynamicMap(difficulty)
+    yield put(actions.updateMap(initialMap))
+    yield Timing.delay(f(20))
+
+    yield* Timing.tween(f(30), t => put(actions.updateCurtain('stage-enter-curtain', 1 - t)))
+  } finally {
+    if (yield cancelled()) {
+      // 将幕布隐藏起来
+      yield put(actions.updateCurtain('stage-enter-curtain', 0))
+    }
+  }
+}
+
 export interface StageResult {
   pass: boolean
   reason?: 'eagle-destroyed' | 'dead'
@@ -46,10 +68,16 @@ export interface StageResult {
  */
 export default function* stageSaga(stage: StageConfig) {
   const { router }: State = yield select()
+  const isDynamicMap = stage.name.startsWith('dynamic-')
+  const difficulty = stage.name.split('-')[1] as 'easy' | 'normal' | 'hard'
   yield put(replace(`/stage/${stage.name}${router.location.search}`))
 
   try {
-    yield animateCurtainAndLoadMap(stage)
+    if (isDynamicMap) {
+      yield loadDynamicMap(difficulty)
+    } else {
+      yield animateCurtainAndLoadMap(stage)
+    }
     yield put(actions.beforeStartStage(stage))
     yield put(actions.showHud())
     yield put(actions.startStage(stage))
@@ -60,7 +88,22 @@ export default function* stageSaga(stage: StageConfig) {
       if (action.type === A.SetTankToDead) {
         const tank: TankRecord = yield select(selectors.tank, action.tankId)
         if (tank.side === 'bot') {
-          if (yield select(selectors.isAllBotDead)) {
+          // 更新动态地图
+          if (isDynamicMap) {
+            const game = yield select(selectors.game)
+            const totalEnemiesKilled = game.totalEnemiesKilled + 1
+            yield put(actions.incTotalEnemiesKilled())
+            
+            // 每消灭3个坦克，地图演变一次
+            if (totalEnemiesKilled % 3 === 0) {
+              const currentMap = yield select(selectors.map)
+              const evolvedMap = evolveDynamicMap(currentMap, difficulty, totalEnemiesKilled)
+              yield put(actions.updateMap(evolvedMap))
+            }
+          }
+          
+          // 动态地图模式下敌方坦克数量无限，不检查是否全灭
+          if (!isDynamicMap && (yield select(selectors.isAllBotDead))) {
             yield Timing.delay(DEV.FAST ? 1000 : 4000)
             yield animateStatistics()
             yield put(actions.beforeEndStage())
