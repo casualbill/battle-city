@@ -55,6 +55,10 @@ export enum A {
   ActivatePlayer = 'ActivatePlayer',
   ReqAddPlayerTank = 'ReqAddPlayerTank',
   ReqAddBot = 'ReqAddAIPlayer',
+  StartVsMode = 'StartVsMode',
+  UpdateVsRemainingTime = 'UpdateVsRemainingTime',
+  IncVsKillCount = 'IncVsKillCount',
+  EndVsMode = 'EndVsMode',
   SetExplosion = 'AddOrUpdateExplosion',
   RemoveExplosion = 'RemoveExplosion',
   SetText = 'SetText',
@@ -636,6 +640,33 @@ export const beforeEndGame = () => ({ type: A.BeforeEndGame as A.BeforeEndGame }
 
 export type EndGame = ReturnType<typeof endGame>
 export const endGame = () => ({ type: A.EndGame as A.EndGame })
+
+export type StartVsMode = ReturnType<typeof startVsMode>
+export function startVsMode(duration: number) {
+  return {
+    type: A.StartVsMode as A.StartVsMode,
+    duration,
+  }
+}
+
+export type UpdateVsRemainingTime = ReturnType<typeof updateVsRemainingTime>
+export function updateVsRemainingTime(time: number) {
+  return {
+    type: A.UpdateVsRemainingTime as A.UpdateVsRemainingTime,
+    time,
+  }
+}
+
+export type IncVsKillCount = ReturnType<typeof incVsKillCount>
+export function incVsKillCount(playerName: PlayerName) {
+  return {
+    type: A.IncVsKillCount as A.IncVsKillCount,
+    playerName,
+  }
+}
+
+export type EndVsMode = ReturnType<typeof endVsMode>
+export const endVsMode = () => ({ type: A.EndVsMode as A.EndVsMode })
 
 export type ResetGame = ReturnType<typeof resetGame>
 export const resetGame = () => ({ type: A.ResetGame as A.ResetGame })

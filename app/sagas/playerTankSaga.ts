@@ -46,6 +46,7 @@ export default function* playerTankSaga(playerName: PlayerName, tankId: TankId) 
     yield takeEvery(A.AfterTick, handleTankPickPowerUps, tankId)
     yield takeLatest(hitByTeammatePredicate, hitByTeammateHandler)
     yield takeEvery(killBot, killBotHandler)
+    yield takeEvery(killPlayer, killPlayerHandler)
   }
 
   function* hitByTeammateHandler(action: actions.Hit) {
@@ -74,7 +75,11 @@ export default function* playerTankSaga(playerName: PlayerName, tankId: TankId) 
   }
 
   function killBot(action: actions.Action) {
-    return action.type === A.Kill && action.sourceTank.tankId === tankId
+    return action.type === A.Kill && action.sourceTank.tankId === tankId && action.targetTank.side === 'bot'
+  }
+
+  function killPlayer(action: actions.Action) {
+    return action.type === A.Kill && action.sourceTank.tankId === tankId && action.targetTank.side === 'player'
   }
 
   function* killBotHandler({ method, sourceTank, targetTank }: actions.Kill) {
@@ -82,6 +87,14 @@ export default function* playerTankSaga(playerName: PlayerName, tankId: TankId) 
     yield put(actions.incKillCount(playerName, targetTank.level))
     if (method === 'bullet') {
       yield put(actions.incPlayerScore(playerName, TANK_KILL_SCORE_MAP[targetTank.level]))
+    }
+  }
+
+  function* killPlayerHandler({ method, sourceTank, targetTank }: actions.Kill) {
+    DEV.ASSERT && console.assert(sourceTank.tankId === tankId)
+    const state: State = yield select()
+    if (selectors.isInVsMode(state)) {
+      yield put(actions.incVsKillCount(playerName))
     }
   }
 }

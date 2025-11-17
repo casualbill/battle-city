@@ -55,6 +55,13 @@ const GameRecordBase = Record(
 
     /** stage-enter-curtain相关字段 */
     stageEnterCurtainT: 0,
+    
+    /** 1v1模式相关状态 */
+    vsMode: false,
+    /** 对战剩余时间 (毫秒) */
+    vsRemainingTime: 0,
+    /** 玩家击杀数 */
+    vsKillCounts: Map<PlayerName, number>([['player-1', 0], ['player-2', 0]]),
   },
   'GameRecord',
 )
@@ -119,6 +126,18 @@ export default function game(state = new GameRecord(), action: Action) {
     )
   } else if (action.type === A.SetIsSpawningBotTank) {
     return state.set('isSpawningBotTank', action.isSpawning)
+  } else if (action.type === A.StartVsMode) {
+    return state.merge({
+      vsMode: true,
+      vsRemainingTime: action.duration,
+      vsKillCounts: Map<PlayerName, number>([['player-1', 0], ['player-2', 0]]),
+    })
+  } else if (action.type === A.UpdateVsRemainingTime) {
+    return state.set('vsRemainingTime', action.time)
+  } else if (action.type === A.IncVsKillCount) {
+    return state.updateIn(['vsKillCounts', action.playerName], count => count + 1)
+  } else if (action.type === A.EndVsMode) {
+    return state.set('vsMode', false)
   } else {
     return state
   }

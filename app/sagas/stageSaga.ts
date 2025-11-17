@@ -54,30 +54,74 @@ export default function* stageSaga(stage: StageConfig) {
     yield put(actions.showHud())
     yield put(actions.startStage(stage))
 
-    while (true) {
-      const action: actions.Action = yield take([A.SetTankToDead, A.DestroyEagle])
-
-      if (action.type === A.SetTankToDead) {
-        const tank: TankRecord = yield select(selectors.tank, action.tankId)
-        if (tank.side === 'bot') {
-          if (yield select(selectors.isAllBotDead)) {
-            yield Timing.delay(DEV.FAST ? 1000 : 4000)
-            yield animateStatistics()
-            yield put(actions.beforeEndStage())
-            yield put(actions.endStage())
-            return { pass: true } as StageResult
+    const inVsMode = yield select(selectors.isInVsMode)
+    if (inVsMode) {
+      yield put(actions.startVsMode(300)) // 5分钟倒计时
+      while (true) {
+        const action: actions.Action = yield take([A.SetTankToDead, A.Tick])
+        if (action.type === A.Tick) {
+          // 更新倒计时
+          const gameState = yield select(state => state.game)
+          if (gameState.vsRemainingTime > 0) {
+            yield put(actions.updateVsRemainingTime(gameState.vsRemainingTime - action.delta))
           }
         } else {
-          if (yield select(selectors.isAllPlayerDead)) {
-            yield Timing.delay(DEV.FAST ? 1000 : 3000)
-            yield animateStatistics()
-            // 因为 gameSaga 会 put END_GAME 所以这里不需要 put END_STAGE
-            return { pass: false, reason: 'dead' } as StageResult
+          // 检查玩家生命和击杀数
+          const gameState = yield select(state => state.game)
+          const player1Lives = yield select(selectors.playerLives, 'player-1')
+          const player2Lives = yield select(selectors.playerLives, 'player-2')
+          const player1Kills = gameState.vsKillCounts.get('player-1', 0)
+          const player2Kills = gameState.vsKillCounts.get('player-2', 0)
+
+          if (player1Kills >= 3) {
+            // 玩家1胜利
+            return { pass: true, winner: 'player-1' } as any
+          } else if (player2Kills >= 3) {
+            // 玩家2胜利
+            return { pass: true, winner: 'player-2' } as any
+          } else if (player1Lives <= 0) {
+            return { pass: true, winner: 'player-2' } as any
+          } else if (player2Lives <= 0) {
+            return { pass: true, winner: 'player-1' } as any
+          } else if (gameState.vsRemainingTime <= 0) {
+            // 时间结束，比较生命数
+            if (player1Lives > player2Lives) {
+              return { pass: true, winner: 'player-1' } as any
+            } else if (player2Lives > player1Lives) {
+              return { pass: true, winner: 'player-2' } as any
+            } else {
+              return { pass: true, winner: 'tie' } as any
+            }
           }
         }
-      } else if (action.type === A.DestroyEagle) {
-        // 因为 gameSaga 会 put END_GAME 所以这里不需要 put END_STAGE
-        return { pass: false, reason: 'eagle-destroyed' } as StageResult
+      }
+    } else {
+      // 原有的游戏逻辑
+      while (true) {
+        const action: actions.Action = yield take([A.SetTankToDead, A.DestroyEagle])
+
+        if (action.type === A.SetTankToDead) {
+          const tank: TankRecord = yield select(selectors.tank, action.tankId)
+          if (tank.side === 'bot') {
+            if (yield select(selectors.isAllBotDead)) {
+              yield Timing.delay(DEV.FAST ? 1000 : 4000)
+              yield animateStatistics()
+              yield put(actions.beforeEndStage())
+              yield put(actions.endStage())
+              return { pass: true } as StageResult
+            }
+          } else {
+            if (yield select(selectors.isAllPlayerDead)) {
+              yield Timing.delay(DEV.FAST ? 1000 : 3000)
+              yield animateStatistics()
+              // 因为 gameSaga 会 put END_GAME 所以这里不需要 put END_STAGE
+              return { pass: false, reason: 'dead' } as StageResult
+            }
+          }
+        } else if (action.type === A.DestroyEagle) {
+          // 因为 gameSaga 会 put END_GAME 所以这里不需要 put END_STAGE
+          return { pass: false, reason: 'eagle-destroyed' } as StageResult
+        }
       }
     }
   } finally {

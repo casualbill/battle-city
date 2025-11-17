@@ -81,16 +81,17 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
   yield delay(0)
   DEV.LOG && console.log('GAME STARTED')
 
+  const inVsMode = yield select(selectors.isInVsMode)
   const players = [playerSaga('player-1', PLAYER_CONFIGS.player1)]
-  if (yield select(selectors.isInMultiPlayersMode)) {
+  if (yield select(selectors.isInMultiPlayersMode) || inVsMode) {
     players.push(playerSaga('player-2', PLAYER_CONFIGS.player2))
   }
 
   const result = yield race({
     tick: tickEmitter({ bindESC: true }),
     players: all(players),
-    ai: botMasterSaga(),
-    powerUp: powerUpManager(),
+    ai: !inVsMode ? botMasterSaga() : null,
+    powerUp: !inVsMode ? powerUpManager() : null,
     bullets: bulletsSaga(),
     // 上面几个 saga 在一个 gameSaga 的生命周期内被认为是后台服务
     // 当 stage-flow 退出（或者是用户直接离开了game-scene）的时候，自动取消上面几个后台服务
