@@ -9,6 +9,7 @@ import { getNextId } from '../utils/common'
 import { BLOCK_SIZE, PLAYER_CONFIGS } from '../utils/constants'
 import * as selectors from '../utils/selectors'
 import Timing from '../utils/Timing'
+import replayManager from '../utils/replayManager'
 import botMasterSaga from './botMasterSaga'
 import bulletsSaga from './bulletsSaga'
 import animateTexts from './common/animateTexts'
@@ -61,6 +62,15 @@ function* stageFlow(startStageIndex: number) {
     }
   }
   yield animateGameover()
+  
+  // 停止录制并保存回放
+  replayManager.stopRecording()
+  const gameState: State = yield select()
+  const endTime = Date.now()
+  const duration = endTime - startTime
+  const totalScore = gameState.scores.reduce((sum, score) => sum + score.points, 0)
+  replayManager.saveReplay(action.stageIndex, totalScore, duration)
+  
   return true
 }
 
@@ -80,6 +90,10 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
   // 以保证后续代码执行前已有的cancel逻辑执行完毕
   yield delay(0)
   DEV.LOG && console.log('GAME STARTED')
+  
+  // 开始录制游戏回放
+  const startTime = Date.now()
+  replayManager.startRecording(startTime)
 
   const players = [playerSaga('player-1', PLAYER_CONFIGS.player1)]
   if (yield select(selectors.isInMultiPlayersMode)) {

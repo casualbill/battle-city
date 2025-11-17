@@ -46,13 +46,20 @@ export class GameoverSceneContent extends React.PureComponent<{ onRestart?: () =
             fill="url(#pattern-brickwall)"
           />
         </g>
-        <g transform={`translate(${5.75 * B}, ${13 * B}) scale(0.5)`}>
+        <g transform={`translate(${5.75 * B}, ${12.5 * B}) scale(0.5)`}>
           <TextButton
             content="press R to restart"
             x={0}
             y={0}
             textFill="#9ed046"
             onClick={this.props.onRestart}
+          />
+          <TextButton
+            content="REPLAY"
+            x={0}
+            y={B}
+            textFill="#9ed046"
+            onClick={() => this.props.onReplay && this.props.onReplay()}
           />
         </g>
       </g>
