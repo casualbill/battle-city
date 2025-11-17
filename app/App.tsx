@@ -39,6 +39,7 @@ class App extends React.PureComponent<{ game: GameRecord }> {
               render={({ location }) => <Redirect to={`/stage/${fsn}${location.search}`} />}
             />
             <Route path="/stage/:stageName" component={GameScene} />
+            <Route exact path="/endless" component={GameScene} />
             <Route component={GameTitleScene} />
           </Switch>
           {DEV.HIDE_ABOUT ? null : <About />}

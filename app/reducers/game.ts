@@ -49,12 +49,29 @@ const GameRecordBase = Record(
     botFrozenTimeout: 0,
     /** 战场中是否正在生成 bot tank */
     isSpawningBotTank: false,
+    /** 是否正在进行道具选择 */
+    isPowerUpSelecting: false,
 
     /** 是否显示HUD */
     showHUD: false,
 
     /** stage-enter-curtain相关字段 */
     stageEnterCurtainT: 0,
+    /** 是否处于无尽模式 */
+    isEndlessMode: false,
+    /** 无尽模式当前关卡数 */
+    endlessLevel: 0,
+    /** 无尽模式已选择的道具历史 */
+    endlessSelectedItems: List<string>(),
+    /** 无尽模式总得分 */
+    endlessTotalScore: 0,
+    /** 无尽模式难度参数 */
+    endlessDifficulty: Map<string, number>([
+      ['tankCount', 20],
+      ['tankSpeed', 1.0],
+      ['bulletSpeed', 1.0],
+      ['eliteTankCount', 0],
+    ]),
   },
   'GameRecord',
 )
@@ -119,6 +136,19 @@ export default function game(state = new GameRecord(), action: Action) {
     )
   } else if (action.type === A.SetIsSpawningBotTank) {
     return state.set('isSpawningBotTank', action.isSpawning)
+  // 无尽模式相关
+  } else if (action.type === A.SetEndlessMode) {
+    return state.set('isEndlessMode', action.isEndless)
+  } else if (action.type === A.SetEndlessLevel) {
+    return state.set('endlessLevel', action.level)
+  } else if (action.type === A.SetEndlessDifficulty) {
+    return state.set('endlessDifficulty', action.difficulty)
+  } else if (action.type === A.SetEndlessTotalScore) {
+    return state.set('endlessTotalScore', action.score)
+  } else if (action.type === A.AddEndlessSelectedItem) {
+    return state.update('endlessSelectedItems', items => items.push(action.item))
+  } else if (action.type === A.SetIsPowerUpSelecting) {
+    return state.set('isPowerUpSelecting', action.isSelecting)
   } else {
     return state
   }
