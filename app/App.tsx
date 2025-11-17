@@ -3,14 +3,18 @@ import { hot } from 'react-hot-loader'
 import { connect } from 'react-redux'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { ConnectedRouter } from 'react-router-redux'
-import About from './components/About'
-import ChooseStageScene from './components/ChooseStageScene'
-import Inspector from './components/dev-only/Inspector'
-import Editor from './components/Editor'
-import Gallery from './components/Gallery'
-import GameoverScene from './components/GameoverScene'
-import GameScene from './components/GameScene'
-import GameTitleScene from './components/GameTitleScene'
+import About from './components/About' 
+import ChooseStageScene from './components/ChooseStageScene' 
+import CreateRoomScene from './components/CreateRoomScene' 
+import Inspector from './components/dev-only/Inspector' 
+import Editor from './components/Editor' 
+import Gallery from './components/Gallery' 
+import GameoverScene from './components/GameoverScene' 
+import GameScene from './components/GameScene' 
+import GameTitleScene from './components/GameTitleScene' 
+import JoinRoomScene from './components/JoinRoomScene' 
+import OnlineScene from './components/OnlineScene' 
+import RoomWaitingScene from './components/RoomWaitingScene' 
 import StageListPageWrapper from './components/StageList'
 import { GameRecord } from './reducers/game'
 import { firstStageName as fsn } from './stages'
@@ -39,6 +43,10 @@ class App extends React.PureComponent<{ game: GameRecord }> {
               render={({ location }) => <Redirect to={`/stage/${fsn}${location.search}`} />}
             />
             <Route path="/stage/:stageName" component={GameScene} />
+            <Route path="/online/room" component={RoomWaitingScene} /> 
+            <Route path="/online/create" component={CreateRoomScene} /> 
+            <Route path="/online/join" component={JoinRoomScene} /> 
+            <Route path="/online" component={OnlineScene} /> 
             <Route component={GameTitleScene} />
           </Switch>
           {DEV.HIDE_ABOUT ? null : <About />}

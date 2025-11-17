@@ -15,9 +15,9 @@ import { Tank } from './tanks'
 import Text from './Text'
 import TextButton from './TextButton'
 
-type Choice = 'single-player' | 'multi-players' | 'stage-list' | 'gallery'
+type Choice = 'single-player' | 'multi-players' | 'stage-list' | 'gallery' | 'online'
 
-const CHOICES: Choice[] = ['single-player', 'multi-players', 'stage-list', 'gallery']
+const CHOICES: Choice[] = ['single-player', 'multi-players', 'stage-list', 'gallery', 'online']
 
 function nextChoice(choice: Choice): Choice {
   const index = CHOICES.indexOf(choice)
@@ -67,6 +67,8 @@ export class GameTitleSceneContent extends React.PureComponent<
       push('/choose')
     } else if (choice === 'multi-players') {
       push(`/choose?${MULTI_PLAYERS_SEARCH_KEY}`)
+    } else if (choice === 'online') {
+      push('/online')
     } else {
       push('/gallery')
     }
@@ -149,6 +151,14 @@ export class GameTitleSceneContent extends React.PureComponent<
           textFill="white"
           onMouseOver={() => this.setState({ choice: 'gallery' })}
           onClick={() => this.onChoose('gallery')}
+        />
+        <TextButton
+          content="online"
+          x={5.5 * B}
+          y={12 * B}
+          textFill="white"
+          onMouseOver={() => this.setState({ choice: 'online' })}
+          onClick={() => this.onChoose('online')}
         />
         <Tank
           tank={
