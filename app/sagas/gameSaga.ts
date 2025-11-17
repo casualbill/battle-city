@@ -5,7 +5,7 @@ import { State } from '../reducers'
 import TextRecord from '../types/TextRecord'
 import * as actions from '../utils/actions'
 import { A } from '../utils/actions'
-import { getNextId } from '../utils/common'
+import { getNextId, frame as f } from '../utils/common'
 import { BLOCK_SIZE, PLAYER_CONFIGS } from '../utils/constants'
 import * as selectors from '../utils/selectors'
 import Timing from '../utils/Timing'
@@ -51,6 +51,13 @@ function* animateGameover() {
   }
 }
 
+function* updateSurviveTime() {
+  while (true) {
+    yield Timing.delay(f(60)) // 每秒更新一次存活时间
+    yield put(actions.updateSurviveTime())
+  }
+}
+
 function* stageFlow(startStageIndex: number) {
   const { stages }: State = yield select()
   for (const stage of stages.slice(startStageIndex)) {
@@ -86,12 +93,16 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
     players.push(playerSaga('player-2', PLAYER_CONFIGS.player2))
   }
 
+  // 创建存活时间更新任务
+  const surviveTimeTask = updateSurviveTime()
+
   const result = yield race({
     tick: tickEmitter({ bindESC: true }),
     players: all(players),
     ai: botMasterSaga(),
     powerUp: powerUpManager(),
     bullets: bulletsSaga(),
+    surviveTime: surviveTimeTask,
     // 上面几个 saga 在一个 gameSaga 的生命周期内被认为是后台服务
     // 当 stage-flow 退出（或者是用户直接离开了game-scene）的时候，自动取消上面几个后台服务
     flow: stageFlow(action.stageIndex),

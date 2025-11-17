@@ -10,7 +10,7 @@ import Screen from './Screen'
 import Text from './Text'
 import TextButton from './TextButton'
 
-export class GameoverSceneContent extends React.PureComponent<{ onRestart?: () => void }> {
+export class GameoverSceneContent extends React.PureComponent<{ onRestart?: () => void; surviveTime?: number; totalEnemiesKilled?: number }> {
   render() {
     const size = ITEM_SIZE_MAP.BRICK
     const scale = 4
@@ -46,6 +46,15 @@ export class GameoverSceneContent extends React.PureComponent<{ onRestart?: () =
             fill="url(#pattern-brickwall)"
           />
         </g>
+        
+        {/* 显示存活时间和击杀数量 */}
+        {this.props.surviveTime != null && this.props.totalEnemiesKilled != null ? (
+          <g transform={`translate(${2.5 * B}, ${9 * B}) scale(0.75)`}>
+            <Text content={`Survive Time: ${Math.floor(this.props.surviveTime / 1000)}s`} x={0} y={0} fill="#ffffff" />
+            <Text content={`Enemies Killed: ${this.props.totalEnemiesKilled}`} x={0} y={1.5 * B} fill="#ffffff" />
+          </g>
+        ) : null}
+        
         <g transform={`translate(${5.75 * B}, ${13 * B}) scale(0.5)`}>
           <TextButton
             content="press R to restart"
@@ -97,9 +106,14 @@ class GameoverScene extends React.PureComponent<GameoverSceneProps> {
   }
 
   render() {
+    const { game } = this.props
     return (
       <Screen>
-        <GameoverSceneContent onRestart={this.onRestart} />
+        <GameoverSceneContent 
+          onRestart={this.onRestart} 
+          surviveTime={game.isDynamicMap ? game.surviveTime : undefined}
+          totalEnemiesKilled={game.isDynamicMap ? game.totalEnemiesKilled : undefined}
+        />
       </Screen>
     )
   }

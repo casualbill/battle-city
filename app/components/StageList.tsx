@@ -19,7 +19,7 @@ import TextButton from './TextButton'
 
 type StageListProps = {
   dispatch: Dispatch
-  tab: 'default' | 'custom'
+  tab: 'default' | 'custom' | 'dynamic'
   page: number
   popupHandle: PopupHandle
 } & State
@@ -207,6 +207,95 @@ class StageListPageUnconnected extends React.PureComponent<StageListProps> {
       stages: allStages,
       popupHandle: { popup },
     } = this.props
+    
+    // 动态地图模式处理
+    if (tab === 'dynamic') {
+      return (
+        <Screen background="#333">
+          <Text content="stages" x={0.5 * B} y={0.5 * B} />
+          <TextButton
+            content="default"
+            x={3.5 * B}
+            y={0.5 * B}
+            selected={tab === 'default'}
+            onClick={tab !== 'default' ? () => dispatch(replace('/list/default')) : null}
+          />
+          <TextButton
+            content="custom"
+            x={7.5 * B}
+            y={0.5 * B}
+            selected={tab === 'custom'}
+            onClick={tab !== 'custom' ? () => dispatch(replace('/list/custom')) : null}
+          />
+          <TextButton
+            content="dynamic"
+            x={11.5 * B}
+            y={0.5 * B}
+            selected={tab === 'dynamic'}
+            onClick={tab !== 'dynamic' ? () => dispatch(replace('/list/dynamic')) : null}
+          />
+          
+          <Text content="Dynamic Map Mode" x={0.5 * B} y={3 * B} fill="#ffffff" />
+          <Text content="Choose Difficulty:" x={0.5 * B} y={5 * B} fill="#cccccc" />
+          
+          {/* 简单难度 */}
+          <g transform="translate(2 * B, 80)">
+            <rect width={4 * B} height={2 * B} fill="#222222" rx="2" ry="2" />
+            <Text content="Easy" x={0.5 * B} y={1.25 * B} fill="#9ed046" />
+            <rect 
+              width={4 * B} 
+              height={2 * B} 
+              fill="transparent"
+              rx="2" 
+              ry="2"
+              onClick={() => dispatch(push('/stage/dynamic?difficulty=easy'))}
+            />
+            <g transform="translate(0, 2.5 * B) scale(0.5)">
+              <Text content="- More cover around player" fill="#666666" />
+              <Text content="- More obstacles near enemy spawn" fill="#666666" y={1.5 * B} />
+            </g>
+          </g>
+          
+          {/* 普通难度 */}
+          <g transform="translate(7 * B, 80)">
+            <rect width={4 * B} height={2 * B} fill="#222222" rx="2" ry="2" />
+            <Text content="Normal" x={0.5 * B} y={1.25 * B} fill="#e79c21" />
+            <rect 
+              width={4 * B} 
+              height={2 * B} 
+              fill="transparent"
+              rx="2" 
+              ry="2"
+              onClick={() => dispatch(push('/stage/dynamic?difficulty=normal'))}
+            />
+            <g transform="translate(0, 2.5 * B) scale(0.5)">
+              <Text content="- Balanced map evolution" fill="#666666" />
+              <Text content="- Normal enemy density" fill="#666666" y={1.5 * B} />
+            </g>
+          </g>
+          
+          {/* 困难难度 */}
+          <g transform="translate(12 * B, 80)">
+            <rect width={4 * B} height={2 * B} fill="#222222" rx="2" ry="2" />
+            <Text content="Hard" x={0.5 * B} y={1.25 * B} fill="#b53121" />
+            <rect 
+              width={4 * B} 
+              height={2 * B} 
+              fill="transparent"
+              rx="2" 
+              ry="2"
+              onClick={() => dispatch(push('/stage/dynamic?difficulty=hard'))}
+            />
+            <g transform="translate(0, 2.5 * B) scale(0.5)">
+              <Text content="- More obstacles around player" fill="#666666" />
+              <Text content="- Increased enemy density" fill="#666666" y={1.5 * B} />
+            </g>
+          </g>
+        </Screen>
+      )
+    }
+    
+    // 传统关卡模式处理
     const filteredStages = allStages.filter(
       s => (s.custom && tab === 'custom') || (!s.custom && tab === 'default'),
     )
@@ -217,17 +306,24 @@ class StageListPageUnconnected extends React.PureComponent<StageListProps> {
         <Text content="stages" x={0.5 * B} y={0.5 * B} />
         <TextButton
           content="default"
-          x={4.5 * B}
+          x={3.5 * B}
           y={0.5 * B}
           selected={tab === 'default'}
           onClick={tab !== 'default' ? () => dispatch(replace('/list/default')) : null}
         />
         <TextButton
           content="custom"
-          x={8.5 * B}
+          x={7.5 * B}
           y={0.5 * B}
           selected={tab === 'custom'}
           onClick={tab !== 'custom' ? () => dispatch(replace('/list/custom')) : null}
+        />
+        <TextButton
+          content="dynamic"
+          x={11.5 * B}
+          y={0.5 * B}
+          selected={tab === 'dynamic'}
+          onClick={tab !== 'dynamic' ? () => dispatch(replace('/list/dynamic')) : null}
         />
         {stages.isEmpty() ? (
           <Text x={0.5 * B} y={3 * B} content="No custom stage." fill="#666666" />

@@ -63,6 +63,8 @@ export enum A {
   StartSpawnTank = 'StartSpawnTank',
   SetPlayerTankSpawningStatus = 'SetPlayerTankSpawningStatus',
   SetIsSpawningBotTank = 'SetIsSpawningBotTankStatus',
+  UpdateSurviveTime = 'UpdateSurviveTime',
+  IncTotalEnemiesKilled = 'IncTotalEnemiesKilled',
   AddTank = 'AddTank',
   StartMove = 'StartMove',
   SetTankToDead = 'SetTankToDead',
@@ -382,6 +384,21 @@ export function setIsSpawningBotTank(isSpawning: boolean) {
   }
 }
 
+export type UpdateSurviveTime = ReturnType<typeof updateSurviveTime>
+export function updateSurviveTime(time: number) {
+  return {
+    type: A.UpdateSurviveTime as A.UpdateSurviveTime,
+    time,
+  }
+}
+
+export type IncTotalEnemiesKilled = ReturnType<typeof incTotalEnemiesKilled>
+export function incTotalEnemiesKilled() {
+  return {
+    type: A.IncTotalEnemiesKilled as A.IncTotalEnemiesKilled,
+  }
+}
+
 export type AddTank = ReturnType<typeof addTank>
 export function addTank(tank: TankRecord) {
   return {
@@ -462,10 +479,12 @@ export function borrowPlayerLife(borrower: PlayerName, lender: PlayerName) {
 }
 
 export type StartGame = ReturnType<typeof startGame>
-export function startGame(stageIndex: number) {
+export function startGame(stageIndex: number, isDynamicMap: boolean = false, dynamicDifficulty: 'easy' | 'normal' | 'hard' = 'normal') {
   return {
     type: A.StartGame as A.StartGame,
     stageIndex,
+    isDynamicMap,
+    dynamicDifficulty,
   }
 }
 
@@ -727,6 +746,8 @@ export type Action =
   | StartSpawnTank
   | SetPlayerTankSpawningStatus
   | SetIsSpawningBotTank
+  | UpdateSurviveTime
+  | IncTotalEnemiesKilled
   | AddTank
   | SetTankToDead
   | StopMove
