@@ -100,6 +100,14 @@ export enum A {
   SyncCustomStages = 'SyncCustomStages',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
+  // 无尽模式相关
+  StartEndlessGame = 'StartEndlessGame',
+  SetEndlessMode = 'SetEndlessMode',
+  SetEndlessLevel = 'SetEndlessLevel',
+  SetEndlessDifficulty = 'SetEndlessDifficulty',
+  SetEndlessTotalScore = 'SetEndlessTotalScore',
+  AddEndlessSelectedItem = 'AddEndlessSelectedItem',
+  SelectPowerUp = 'SelectPowerUp',
 }
 
 export type Move = ReturnType<typeof move>
@@ -466,6 +474,70 @@ export function startGame(stageIndex: number) {
   return {
     type: A.StartGame as A.StartGame,
     stageIndex,
+  }
+}
+
+// 无尽模式相关 actions
+export type StartEndlessGame = ReturnType<typeof startEndlessGame>
+export function startEndlessGame() {
+  return {
+    type: A.StartEndlessGame as A.StartEndlessGame,
+  }
+}
+
+export type SetEndlessMode = ReturnType<typeof setEndlessMode>
+export function setEndlessMode(isEndless: boolean) {
+  return {
+    type: A.SetEndlessMode as A.SetEndlessMode,
+    isEndless,
+  }
+}
+
+export type SetEndlessLevel = ReturnType<typeof setEndlessLevel>
+export function setEndlessLevel(level: number) {
+  return {
+    type: A.SetEndlessLevel as A.SetEndlessLevel,
+    level,
+  }
+}
+
+export type SetEndlessDifficulty = ReturnType<typeof setEndlessDifficulty>
+export function setEndlessDifficulty(difficulty: Map<string, number>) {
+  return {
+    type: A.SetEndlessDifficulty as A.SetEndlessDifficulty,
+    difficulty,
+  }
+}
+
+export type SetEndlessTotalScore = ReturnType<typeof setEndlessTotalScore>
+export function setEndlessTotalScore(score: number) {
+  return {
+    type: A.SetEndlessTotalScore as A.SetEndlessTotalScore,
+    score,
+  }
+}
+
+export type AddEndlessSelectedItem = ReturnType<typeof addEndlessSelectedItem>
+export function addEndlessSelectedItem(item: string) {
+  return {
+    type: A.AddEndlessSelectedItem as A.AddEndlessSelectedItem,
+    item,
+  }
+}
+
+export type SelectPowerUp = ReturnType<typeof selectPowerUp>
+export function selectPowerUp(item: string) {
+  return {
+    type: A.SelectPowerUp as A.SelectPowerUp,
+    item,
+  }
+}
+
+export type SetIsPowerUpSelecting = ReturnType<typeof setIsPowerUpSelecting>
+export function setIsPowerUpSelecting(isSelecting: boolean) {
+  return {
+    type: A.SetIsPowerUpSelecting as A.SetIsPowerUpSelecting,
+    isSelecting,
   }
 }
 

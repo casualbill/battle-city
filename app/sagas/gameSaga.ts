@@ -64,6 +64,58 @@ function* stageFlow(startStageIndex: number) {
   return true
 }
 
+// 无尽模式流程
+function* endlessFlow() {
+  const { stages }: State = yield select()
+  let currentLevel = 0
+  
+  while (true) {
+    // 循环使用关卡地图
+    const stageIndex = currentLevel % stages.size
+    const stage = stages.get(stageIndex)
+    
+    // 更新无尽模式状态
+    yield put(actions.setEndlessMode(true))
+    yield put(actions.setEndlessLevel(currentLevel + 1))
+    
+    // 应用难度递增机制
+    const difficulty = Map({
+      tankCount: 20 + Math.floor(currentLevel / 1) * 2,
+      tankSpeed: 1.0 + Math.floor(currentLevel / 2) * 0.1,
+      bulletSpeed: 1.0 + Math.floor(currentLevel / 3) * 0.1,
+      eliteTankCount: currentLevel >= 9 ? Math.floor((currentLevel - 9) / 3) + 2 : 0,
+    })
+    yield put(actions.setEndlessDifficulty(difficulty))
+    
+    // 运行关卡
+    const stageResult: StageResult = yield stageSaga(stage)
+    DEV.LOG && console.log('endless stageResult:', stageResult)
+    
+    if (!stageResult.pass) {
+      break
+    }
+    
+    // 关卡通过后更新总得分
+    const { game }: State = yield select()
+    const newTotalScore = game.endlessTotalScore + game.playersScores.reduce((sum, score) => sum + score, 0)
+    yield put(actions.setEndlessTotalScore(newTotalScore))
+    
+    // 每3关弹出道具选择界面
+    if ((currentLevel + 1) % 3 === 0) {
+      yield put(actions.setIsPowerUpSelecting(true))
+      // 弹出道具选择界面，等待用户选择
+      const selectedItem = yield take(A.SelectPowerUp)
+      yield put(actions.addEndlessSelectedItem(selectedItem.item))
+      yield put(actions.setIsPowerUpSelecting(false))
+    }
+    
+    currentLevel++
+  }
+  
+  yield animateGameover()
+  return true
+}
+
 /**
  *  game-saga负责管理整体游戏进度
  *  负责管理游戏开始界面, 游戏结束界面
@@ -86,6 +138,9 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
     players.push(playerSaga('player-2', PLAYER_CONFIGS.player2))
   }
 
+  // 确定游戏流程：普通关卡流或无尽模式流
+  const flow = action.type === A.StartEndlessGame ? endlessFlow() : stageFlow(action.stageIndex)
+  
   const result = yield race({
     tick: tickEmitter({ bindESC: true }),
     players: all(players),
@@ -94,7 +149,7 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
     bullets: bulletsSaga(),
     // 上面几个 saga 在一个 gameSaga 的生命周期内被认为是后台服务
     // 当 stage-flow 退出（或者是用户直接离开了game-scene）的时候，自动取消上面几个后台服务
-    flow: stageFlow(action.stageIndex),
+    flow,
     leave: take(A.LeaveGameScene),
   })
 
