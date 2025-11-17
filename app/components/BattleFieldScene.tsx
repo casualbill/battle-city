@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import _ from 'lodash';
+import * as selectors from '../utils/selectors';
 import React from 'react'
 import { connect } from 'react-redux'
 import { State } from '../reducers'
@@ -84,8 +85,52 @@ export class BattleFieldContent extends React.PureComponent<Partial<State & Poin
 
 class BattleFieldScene extends React.PureComponent<State> {
   render() {
-    const { game, texts } = this.props
+    const { game, texts, tanks } = this.props;
+    const inVsMode = selectors.isInVsMode(this.props);
 
+    if (inVsMode) {
+      // 1v1模式下，上下分屏显示
+      const player1Tank = tanks.find(t => t.side === 'player' && t.color === 'yellow');
+      const player2Tank = tanks.find(t => t.side === 'player' && t.color === 'green');
+
+      // 计算每个玩家的视角中心
+      const p1Center = player1Tank ? { x: player1Tank.x, y: player1Tank.y } : { x: B*7, y: B*3 };
+      const p2Center = player2Tank ? { x: player2Tank.x, y: player2Tank.y } : { x: B*7, y: B*10 };
+
+      // 计算每个玩家的偏移量
+      const p1Offset = { x: B*7 - p1Center.x, y: B*3 - p1Center.y };
+      const p2Offset = { x: B*7 - p2Center.x, y: B*10 - p2Center.y };
+
+      return (
+        <Screen>
+          <HUD />
+          {/* 玩家1的视图 */}
+          <g clipPath="url(#player1Viewport)">
+            <BattleFieldContent {...this.props} x={B + p1Offset.x} y={B + p1Offset.y} />
+          </g>
+          {/* 玩家2的视图 */}
+          <g clipPath="url(#player2Viewport)">
+            <BattleFieldContent {...this.props} x={B + p2Offset.x} y={B*7 + p2Offset.y} />
+          </g>
+          {/* 定义裁剪区域 */}
+          <defs>
+            <clipPath id="player1Viewport">
+              <rect x={B} y={B} width={B*13} height={B*6} />
+            </clipPath>
+            <clipPath id="player2Viewport">
+              <rect x={B} y={B*7} width={B*13} height={B*6} />
+            </clipPath>
+          </defs>
+          {/* 分割线 */}
+          <rect x={0} y={B*7} width={B*16} height={2} fill="white" />
+          <TextLayer texts={texts} />
+          <CurtainsContainer />
+          {game.paused ? <PauseIndicator x={6.25 * B} y={8 * B} /> : null}
+        </Screen>
+      );
+    }
+
+    // 普通模式下的显示
     return (
       <Screen>
         <HUD />
@@ -94,7 +139,7 @@ class BattleFieldScene extends React.PureComponent<State> {
         <CurtainsContainer />
         {game.paused ? <PauseIndicator x={6.25 * B} y={8 * B} /> : null}
       </Screen>
-    )
+    );
   }
 }
 

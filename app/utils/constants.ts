@@ -18,6 +18,7 @@ export const SCREEN_WIDTH = 16 * BLOCK_SIZE
 export const SCREEN_HEIGHT = 15 * BLOCK_SIZE
 
 export const MULTI_PLAYERS_SEARCH_KEY = 'multi-players'
+export const VS_MODE_SEARCH_KEY = '1v1'
 
 /**
  * 坦克的配色方案
@@ -78,20 +79,6 @@ export const PLAYER_CONFIGS: { [key: string]: PlayerConfig } = {
   player1: {
     color: 'yellow',
     control: {
-      up: 'KeyW',
-      left: 'KeyA',
-      down: 'KeyS',
-      right: 'KeyD',
-      fire: 'KeyJ',
-    },
-    spawnPos: {
-      x: 4 * BLOCK_SIZE,
-      y: 12 * BLOCK_SIZE,
-    },
-  },
-  player2: {
-    color: 'green',
-    control: {
       up: 'ArrowUp',
       left: 'ArrowLeft',
       down: 'ArrowDown',
@@ -99,8 +86,22 @@ export const PLAYER_CONFIGS: { [key: string]: PlayerConfig } = {
       fire: 'Slash',
     },
     spawnPos: {
+      x: 4 * BLOCK_SIZE,
+      y: 3 * BLOCK_SIZE,
+    },
+  },
+  player2: {
+    color: 'green',
+    control: {
+      up: 'KeyW',
+      left: 'KeyA',
+      down: 'KeyS',
+      right: 'KeyD',
+      fire: 'KeyJ',
+    },
+    spawnPos: {
       x: 8 * BLOCK_SIZE,
-      y: 12 * BLOCK_SIZE,
+      y: 10 * BLOCK_SIZE,
     },
   },
 }
