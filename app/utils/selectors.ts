@@ -15,6 +15,11 @@ export const isInMultiPlayersMode = (state: State) => {
   return params.has(MULTI_PLAYERS_SEARCH_KEY)
 }
 
+export const isAIAssistantMode = (state: State) => {
+  const params = new URLSearchParams(state.router.location.search)
+  return params.has(AI_ASSISTANT_SEARCH_KEY)
+}
+
 function isPlayerDead(player: PlayerRecord) {
   return player.lives === 0 && !player.isActive() && !player.isSpawningTank
 }
