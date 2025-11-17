@@ -1,5 +1,6 @@
 import { all, put, race, select, take, takeEvery } from 'redux-saga/effects'
 import AIWorkerSaga from '../ai/AIWorkerSaga'
+import OllamaAIWorkerSaga from '../ai/OllamaAIWorkerSaga'
 import Bot from '../ai/Bot'
 import { State } from '../reducers'
 import { TankRecord } from '../types'
@@ -10,7 +11,7 @@ import { explosionFromTank, scoreFromKillTank } from './common/destroyTanks'
 import directionController from './directionController'
 import fireController from './fireController'
 
-export default function* botSaga(tankId: TankId) {
+export default function* botSaga(tankId: TankId): Generator<any, void, any> {
   const ctx = new Bot(tankId)
   try {
     yield takeEvery(hitPredicate, hitHandler)
@@ -19,7 +20,8 @@ export default function* botSaga(tankId: TankId) {
         generateBulletCompleteNote(),
         directionController(tankId, ctx.directionControllerCallback),
         fireController(tankId, ctx.fireControllerCallback),
-        AIWorkerSaga(ctx),
+        // 根据游戏模式选择使用不同的AI Worker Saga
+        (yield select(selectors.isInAICombatMode)) ? OllamaAIWorkerSaga(ctx) : AIWorkerSaga(ctx),
       ]),
       killed: take(killedPredicate),
       endGame: take(A.EndGame),
@@ -44,7 +46,7 @@ export default function* botSaga(tankId: TankId) {
     return action.type === actions.A.Hit && action.targetTank.tankId === tankId
   }
 
-  function* hitHandler(action: actions.Hit) {
+  function* hitHandler(action: actions.Hit): Generator<any, void, any> {
     const tank: TankRecord = yield select(selectors.tank, tankId)
     DEV.ASSERT && console.assert(tank != null)
     if (tank.hp > 1) {
@@ -59,7 +61,7 @@ export default function* botSaga(tankId: TankId) {
     return action.type === actions.A.Kill && action.targetTank.tankId === tankId
   }
 
-  function* generateBulletCompleteNote() {
+  function* generateBulletCompleteNote(): Generator<any, void, any> {
     while (true) {
       const { bulletId }: actions.BeforeRemoveBullet = yield take(actions.A.BeforeRemoveBullet)
       const { bullets }: State = yield select()
