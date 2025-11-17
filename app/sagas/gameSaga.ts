@@ -11,6 +11,7 @@ import * as selectors from '../utils/selectors'
 import Timing from '../utils/Timing'
 import botMasterSaga from './botMasterSaga'
 import bulletsSaga from './bulletsSaga'
+import energySaga from './energySaga'
 import animateTexts from './common/animateTexts'
 import playerSaga from './playerSaga'
 import powerUpManager from './powerUpManager'
@@ -92,6 +93,7 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
     ai: botMasterSaga(),
     powerUp: powerUpManager(),
     bullets: bulletsSaga(),
+    energy: energySaga(),
     // 上面几个 saga 在一个 gameSaga 的生命周期内被认为是后台服务
     // 当 stage-flow 退出（或者是用户直接离开了game-scene）的时候，自动取消上面几个后台服务
     flow: stageFlow(action.stageIndex),

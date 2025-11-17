@@ -57,6 +57,16 @@ export default function tanks(state = Map() as TanksMap, action: Action) {
     return state.update(action.tankId, tank =>
       tank.set('helmetDuration', Math.max(0, action.duration)),
     )
+  } else if (action.type === A.SetEnergy) {
+    return state.update(action.tankId, tank =>
+      tank.set('energy', Math.max(0, Math.min(100, action.energy))),
+    )
+  } else if (action.type === A.SetOverloading) {
+    return state.update(action.tankId, tank => tank.set('overloading', action.overloading))
+  } else if (action.type === A.SetOverloadChargeTime) {
+    return state.update(action.tankId, tank => tank.set('overloadChargeTime', action.overloadChargeTime))
+  } else if (action.type === A.SetParalyzedTimeout) {
+    return state.update(action.tankId, tank => tank.set('paralyzedTimeout', action.paralyzedTimeout))
   } else {
     return state
   }
