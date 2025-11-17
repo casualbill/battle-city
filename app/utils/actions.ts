@@ -100,6 +100,16 @@ export enum A {
   SyncCustomStages = 'SyncCustomStages',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
+  // 回放功能
+  StartReplay = 'StartReplay',
+  PauseReplay = 'PauseReplay',
+  ResumeReplay = 'ResumeReplay',
+  FastForwardReplay = 'FastForwardReplay',
+  RewindReplay = 'RewindReplay',
+  JumpToStartReplay = 'JumpToStartReplay',
+  JumpToEndReplay = 'JumpToEndReplay',
+  StopReplay = 'StopReplay',
+  UpdateReplayProgress = 'UpdateReplayProgress'
 }
 
 export type Move = ReturnType<typeof move>

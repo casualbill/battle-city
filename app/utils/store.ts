@@ -4,9 +4,10 @@ import createSgaMiddleware from 'redux-saga'
 import reducer from '../reducers/index'
 import rootSaga from '../sagas/index'
 import history from '../utils/history'
+import replayMiddleware from './replayMiddleware'
 
 const sagaMiddleware = createSgaMiddleware()
 
-export default createStore(reducer, applyMiddleware(routerMiddleware(history), sagaMiddleware))
+export default createStore(reducer, applyMiddleware(routerMiddleware(history), sagaMiddleware, replayMiddleware))
 
 sagaMiddleware.run(rootSaga)

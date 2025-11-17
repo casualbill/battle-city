@@ -11,6 +11,7 @@ import Gallery from './components/Gallery'
 import GameoverScene from './components/GameoverScene'
 import GameScene from './components/GameScene'
 import GameTitleScene from './components/GameTitleScene'
+import ReplayScene from './components/ReplayScene'
 import StageListPageWrapper from './components/StageList'
 import { GameRecord } from './reducers/game'
 import { firstStageName as fsn } from './stages'
@@ -39,6 +40,7 @@ class App extends React.PureComponent<{ game: GameRecord }> {
               render={({ location }) => <Redirect to={`/stage/${fsn}${location.search}`} />}
             />
             <Route path="/stage/:stageName" component={GameScene} />
+            <Route path="/replay" component={ReplayScene} />
             <Route component={GameTitleScene} />
           </Switch>
           {DEV.HIDE_ABOUT ? null : <About />}

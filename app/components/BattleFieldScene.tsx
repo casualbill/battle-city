@@ -24,6 +24,7 @@ import SteelLayer from './SteelLayer'
 import TankHelmet from './TankHelmet'
 import { Tank } from './tanks'
 import TextLayer from './TextLayer'
+import ReplayControls from './ReplayControls'
 
 export class BattleFieldContent extends React.PureComponent<Partial<State & Point>> {
   render() {
@@ -93,6 +94,7 @@ class BattleFieldScene extends React.PureComponent<State> {
         <TextLayer texts={texts} />
         <CurtainsContainer />
         {game.paused ? <PauseIndicator x={6.25 * B} y={8 * B} /> : null}
+        <ReplayControls />
       </Screen>
     )
   }
