@@ -10,7 +10,7 @@ import * as actions from '../utils/actions'
 import BattleFieldScene from './BattleFieldScene'
 import StatisticsScene from './StatisticsScene'
 import ModelLoadingScene from './ModelLoadingScene'
-import { isAIAssistantMode } from '../utils/selectors'
+import { isAIAssistantMode } from '../utils/selectors';
 
 export interface GameSceneProps {
   game: GameRecord
@@ -27,7 +27,7 @@ class GameScene extends React.PureComponent<GameSceneProps> {
 
   componentDidMount() {
     const { location } = this.props
-    const isAI = isAIAssistantMode(location.search)
+    const isAI = isAIAssistantMode({ router: { location } } as any)
     if (!isAI) {
       this.didMountOrUpdate()
     }
@@ -35,7 +35,7 @@ class GameScene extends React.PureComponent<GameSceneProps> {
 
   componentDidUpdate() {
     const { location } = this.props
-    const isAI = isAIAssistantMode(location.search)
+    const isAI = isAIAssistantMode({ router: { location } } as any)
     if (!isAI && this.state.modelLoaded) {
       this.didMountOrUpdate()
     }
@@ -76,7 +76,7 @@ class GameScene extends React.PureComponent<GameSceneProps> {
   render() {
     const { game, location } = this.props
     const { modelLoaded } = this.state
-    const isAI = isAIAssistantMode(location.search)
+    const isAI = isAIAssistantMode({ router: { location } } as any)
 
     if (game.status === 'stat') {
       return <StatisticsScene />

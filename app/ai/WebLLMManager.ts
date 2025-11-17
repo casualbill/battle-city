@@ -1,10 +1,10 @@
-import { LLM, ChatMessage } from '@mlc-ai/web-llm'
+import { MLCEngine, ChatCompletionRequest, ChatCompletion } from '@mlc-ai/web-llm'
 import { State, TankRecord, BulletRecord } from '../types'
 import * as selectors from '../utils/selectors'
 
 // WebLLM管理器，用于加载和管理AI模型
 export class WebLLMManager {
-  private llm: LLM | null = null
+  private llm: MLCEngine | null = null
   private isLoading: boolean = false
   private loadingProgress: number = 0
   private onProgress: ((progress: number) => void) | null = null
@@ -20,18 +20,16 @@ export class WebLLMManager {
     this.onProgress = onProgress || null
 
     try {
-      // 创建LLM实例
-      const llm = new LLM()
+      // 创建MLCEngine实例
+      const llm = new MLCEngine()
 
       // 加载模型 - Gemma-2B q4f16
-      await llm.loadModel({
-        model: 'gemma-2b-it-q4f16_1',
-        maxSeqLen: 512,
-        progressCallback: (progress) => {
-          this.loadingProgress = progress
-          if (this.onProgress) {
-            this.onProgress(progress)
-          }
+      await llm.reload('gemma-2b-it-q4f16_1', {
+        maxSequenceLength: 512
+      }, undefined, (progress) => {
+        this.loadingProgress = progress
+        if (this.onProgress) {
+          this.onProgress(progress)
         }
       })
 
@@ -89,18 +87,14 @@ Do NOT include any other text in your response.`
 
     try {
       // 生成AI响应
-      const messages: ChatMessage[] = [
-        { role: 'user', content: prompt }
-      ]
-
-      const response = await this.llm.chat.completions.create({
-        messages,
+      const response = await this.llm.completions.create({
+        prompt: prompt,
         temperature: 0.1,
         max_tokens: 64,
         top_p: 0.95
       })
 
-      const responseContent = response.choices[0].message.content.trim()
+      const responseContent = response.choices[0].text.trim()
       const decision = JSON.parse(responseContent)
 
       // 验证决策格式

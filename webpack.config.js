@@ -81,6 +81,14 @@ module.exports = function(env = {}, argv) {
           test: /\.css$/,
           use: ['style-loader', 'css-loader'],
         },
+        {
+          test: /\.wasm$/,
+          type: 'webassembly/experimental',
+        },
+        {
+          test: /@mlc-ai\/web-llm/,
+          use: ['raw-loader'],
+        },
       ],
     },
 
