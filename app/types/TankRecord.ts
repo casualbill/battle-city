@@ -27,6 +27,14 @@ const TankRecordType = Record({
   cooldown: 0,
   // player tank被队友击中时无法移动，此时坦克会闪烁，该变量用来记录坦克是否可见
   visible: true,
+  // 能量值，范围0-100
+  energy: 100,
+  // 是否处于过载状态
+  overloading: false,
+  // 过载充能时间
+  overloadChargeTime: 0,
+  // 瘫痪超时时间
+  paralyzedTimeout: 0,
 })
 
 export default class TankRecord extends TankRecordType {
