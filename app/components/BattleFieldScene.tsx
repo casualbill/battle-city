@@ -6,7 +6,7 @@ import CurtainsContainer from './CurtainsContainer'
 import HUD from './HUD'
 import PauseIndicator from './PauseIndicator'
 import TextLayer from './TextLayer'
-import ThreeJSScene from './ThreeJSScene'
+import ThreeJSScene from './ThreeJSScene.js'
 
 export class BattleFieldContent extends React.PureComponent<State> {
   render() {
