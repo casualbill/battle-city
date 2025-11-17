@@ -2,6 +2,7 @@ import { fork, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import * as actions from '../utils/actions'
 import { A } from '../utils/actions'
 import gameSaga from './gameSaga'
+import achievementSaga from './achievementSaga'
 import soundManager from './soundManager'
 import { syncFrom, syncTo } from './syncLocalStorage'
 
@@ -10,6 +11,7 @@ export default function* rootSaga() {
 
   yield syncFrom()
   yield fork(soundManager)
+  yield fork(achievementSaga)
   yield takeEvery(A.SyncCustomStages, syncTo)
   yield takeLatest([A.StartGame, A.ResetGame], gameSaga)
 

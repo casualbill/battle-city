@@ -17,6 +17,7 @@ import scores, { ScoresMap } from './scores'
 import stages from './stages'
 import tanks, { TanksMap } from './tanks'
 import texts, { TextsMap } from './texts'
+import achievements, { AchievementsMap } from './achievements'
 
 export interface State {
   router: any
@@ -35,6 +36,7 @@ export interface State {
   stages: List<StageConfig>
   editorContent: StageConfig
   devOnly: any
+  achievements: AchievementsMap
 }
 
 export function time(state = 0, action: Action) {
@@ -69,5 +71,6 @@ export default combineReducers<State>({
   scores,
   stages,
   devOnly,
+  achievements,
   editorContent,
 })

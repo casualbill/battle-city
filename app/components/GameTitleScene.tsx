@@ -15,9 +15,9 @@ import { Tank } from './tanks'
 import Text from './Text'
 import TextButton from './TextButton'
 
-type Choice = 'single-player' | 'multi-players' | 'stage-list' | 'gallery'
+type Choice = 'single-player' | 'multi-players' | 'stage-list' | 'gallery' | 'achievements'
 
-const CHOICES: Choice[] = ['single-player', 'multi-players', 'stage-list', 'gallery']
+const CHOICES: Choice[] = ['single-player', 'multi-players', 'stage-list', 'gallery', 'achievements']
 
 function nextChoice(choice: Choice): Choice {
   const index = CHOICES.indexOf(choice)
@@ -67,8 +67,10 @@ export class GameTitleSceneContent extends React.PureComponent<
       push('/choose')
     } else if (choice === 'multi-players') {
       push(`/choose?${MULTI_PLAYERS_SEARCH_KEY}`)
-    } else {
+    } else if (choice === 'gallery') {
       push('/gallery')
+    } else if (choice === 'achievements') {
+      push('/achievements')
     }
   }
 

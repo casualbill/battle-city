@@ -98,6 +98,11 @@ export enum A {
   RemoveCustomStage = 'RemoveCustomStage',
   SetEditorContent = 'SetEditorContent',
   SyncCustomStages = 'SyncCustomStages',
+  // Achievement actions
+  UnlockAchievement = 'UnlockAchievement',
+  UpdateAchievementProgress = 'UpdateAchievementProgress',
+  LoadAchievements = 'LoadAchievements',
+  ResetAchievements = 'ResetAchievements',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
 }
@@ -678,6 +683,18 @@ export const clearBullets = () => ({ type: A.ClearBullets as A.ClearBullets })
 export type SyncCustomStages = ReturnType<typeof syncCustomStages>
 export const syncCustomStages = () => ({ type: A.SyncCustomStages as A.SyncCustomStages })
 
+export type UnlockAchievement = ReturnType<typeof unlockAchievement>
+export const unlockAchievement = (achievementId: string) => ({ type: A.UnlockAchievement as A.UnlockAchievement, achievementId })
+
+export type UpdateAchievementProgress = ReturnType<typeof updateAchievementProgress>
+export const updateAchievementProgress = (achievementId: string, progress: number, target?: number) => ({ type: A.UpdateAchievementProgress as A.UpdateAchievementProgress, achievementId, progress, target })
+
+export type LoadAchievements = ReturnType<typeof loadAchievements>
+export const loadAchievements = (achievements: any) => ({ type: A.LoadAchievements as A.LoadAchievements, achievements })
+
+export type ResetAchievements = ReturnType<typeof resetAchievements>
+export const resetAchievements = () => ({ type: A.ResetAchievements as A.ResetAchievements })
+
 export type LeaveGameScene = ReturnType<typeof leaveGameScene>
 export const leaveGameScene = () => ({ type: A.LeaveGameScene as A.LeaveGameScene })
 
@@ -761,5 +778,9 @@ export type Action =
   | RemoveCustomStage
   | SetEditorContent
   | SyncCustomStages
+  | UnlockAchievement
+  | UpdateAchievementProgress
+  | LoadAchievements
+  | ResetAchievements
   | LeaveGameScene
   | PlaySound

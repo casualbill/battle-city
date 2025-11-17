@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { ConnectedRouter } from 'react-router-redux'
 import About from './components/About'
+import AchievementScene from './components/AchievementScene'
 import ChooseStageScene from './components/ChooseStageScene'
 import Inspector from './components/dev-only/Inspector'
 import Editor from './components/Editor'
@@ -39,6 +40,7 @@ class App extends React.PureComponent<{ game: GameRecord }> {
               render={({ location }) => <Redirect to={`/stage/${fsn}${location.search}`} />}
             />
             <Route path="/stage/:stageName" component={GameScene} />
+            <Route path="/achievements" component={AchievementScene} />
             <Route component={GameTitleScene} />
           </Switch>
           {DEV.HIDE_ABOUT ? null : <About />}
