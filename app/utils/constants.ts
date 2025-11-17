@@ -25,27 +25,37 @@ export const MULTI_PLAYERS_SEARCH_KEY = 'multi-players'
  * 每种配色方案包括三个具体的颜色值, a对应浅色, b对应一般颜色, c对应深色
  */
 type Schema = { [color: string]: { a: string; b: string; c: string } }
-export const TANK_COLOR_SCHEMES: Schema = {
-  yellow: {
-    a: '#E7E794',
-    b: '#E79C21',
-    c: '#6B6B00',
-  },
-  green: {
-    a: '#B5F7CE',
-    b: '#008C31',
-    c: '#005200',
-  },
-  silver: {
-    a: '#FFFFFF',
-    b: '#ADADAD',
-    c: '#00424A',
-  },
-  red: {
-    a: '#FFFFFF',
-    b: '#B53121',
-    c: '#5A007B',
-  },
+export const TANK_COLOR_SCHEMES: Schema = { 
+  yellow: { 
+    a: '#E7E794', 
+    b: '#E79C21', 
+    c: '#6B6B00', 
+  }, 
+  green: { 
+    a: '#B5F7CE', 
+    b: '#008C31', 
+    c: '#005200', 
+  }, 
+  silver: { 
+    a: '#FFFFFF', 
+    b: '#ADADAD', 
+    c: '#00424A', 
+  }, 
+  red: { 
+    a: '#FFFFFF', 
+    b: '#B53121', 
+    c: '#5A007B', 
+  }, 
+  blue: { 
+    a: '#B0E0E6', 
+    b: '#1E90FF', 
+    c: '#0000CD', 
+  }, 
+  purple: { 
+    a: '#E6E6FA', 
+    b: '#9370DB', 
+    c: '#483D8B', 
+  }, 
 }
 
 /** 击杀坦克的得分列表 */
