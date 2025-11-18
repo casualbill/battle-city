@@ -90,6 +90,7 @@ class Editor extends React.Component<EditorProps> {
     difficulty: 1 as StageDifficulty,
     bots: defaultBotsConfig,
 
+    size: FBZ, // 地图尺寸，默认使用FIELD_BLOCK_SIZE
     itemList: Repeat(new MapItem(), FBZ ** 2).toList(),
     itemType: 'X' as MapItemType,
     brickHex: 0xf,
@@ -103,6 +104,7 @@ class Editor extends React.Component<EditorProps> {
   }
 
   getT(event: React.MouseEvent<SVGSVGElement>) {
+    const { size } = this.state
     let totalTop = 0
     let totalLeft = 0
     let node: Element = this.svg
@@ -113,8 +115,8 @@ class Editor extends React.Component<EditorProps> {
     }
     const row = Math.floor((event.clientY + totalTop - this.svg.clientTop) / ZOOM_LEVEL / B)
     const col = Math.floor((event.clientX + totalLeft - this.svg.clientLeft) / ZOOM_LEVEL / B)
-    if (row >= 0 && row < FBZ && col >= 0 && col < FBZ) {
-      return row * FBZ + col
+    if (row >= 0 && row < size && col >= 0 && col < size) {
+      return row * size + col
     } else {
       return -1
     }
@@ -384,12 +386,12 @@ class Editor extends React.Component<EditorProps> {
   }
 
   renderMapView() {
-    const { brickHex, steelHex, itemType, t } = this.state
+    const { brickHex, steelHex, itemType, t, size } = this.state
 
     return (
       <g className="map-view">
         <StagePreview disableImageCache stage={this.getStage()} />
-        <Grid t={t} />
+        <Grid t={t} size={size} />
         <g className="tools" transform={`translate(${13 * B},0)`}>
           <TextButton
             content="?"
@@ -422,12 +424,12 @@ class Editor extends React.Component<EditorProps> {
   }
 
   renderConfigView() {
-    const { bots, name, difficulty, t } = this.state
+    const { bots, name, difficulty, t, size } = this.state
     const totalBotCount = bots.map(e => e.count).reduce(add)
 
     return (
       <g className="config-view">
-        <Grid t={t} />
+        <Grid t={t} size={size} />
         <Text content="name:" x={3.5 * B} y={1 * B} fill="#ccc" />
         <TextInput
           x={6.5 * B}

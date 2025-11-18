@@ -44,8 +44,9 @@ export function testCollide(subject: Rect, object: Rect, threshhold = 0) {
 export const frame = (x: number) => (1000 / 60) * x
 
 // 判断rect是否在战场内
-export function isInField(rect: Rect) {
-  return between(0, rect.x, FIELD_SIZE - rect.width) && between(0, rect.y, FIELD_SIZE - rect.height)
+export function isInField(rect: Rect, size: number, blockSize: number) {
+  const fieldSize = size * blockSize;
+  return between(0, rect.x, fieldSize - rect.width) && between(0, rect.y, fieldSize - rect.height)
 }
 
 const nextIdMap = new Map<string, number>()

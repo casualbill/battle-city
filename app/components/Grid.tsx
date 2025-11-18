@@ -2,20 +2,19 @@ import { Range } from 'immutable'
 import React from 'react'
 import {
   BLOCK_SIZE as B,
-  FIELD_BLOCK_SIZE as FBZ,
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
 } from '../utils/constants'
 
-export default class Grid extends React.PureComponent<{ t?: number }> {
+export default class Grid extends React.PureComponent<{ t?: number; size: number }> {
   render() {
-    const { t = -1 } = this.props
-    const hrow = Math.floor(t / FBZ)
-    const hcol = t % FBZ
+    const { t = -1, size } = this.props
+    const hrow = Math.floor(t / size)
+    const hcol = t % size
 
     return (
       <g className="dash-lines" stroke="steelblue" strokeWidth="0.5" strokeDasharray="2 2">
-        {Range(1, FBZ + 1)
+        {Range(1, size + 1)
           .map(col => (
             <line
               key={col}
@@ -27,7 +26,7 @@ export default class Grid extends React.PureComponent<{ t?: number }> {
             />
           ))
           .toArray()}
-        {Range(1, FBZ + 1)
+        {Range(1, size + 1)
           .map(row => (
             <line
               key={row}

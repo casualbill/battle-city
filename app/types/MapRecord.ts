@@ -10,6 +10,7 @@ const MapRecordBase = Record({
   snows: Repeat(false, N_MAP.SNOW ** 2).toList(),
   forests: Repeat(false, N_MAP.FOREST ** 2).toList(),
   restrictedAreas: IMap<AreaId, Rect>(),
+  size: 13, // 默认地图大小为13x13
 })
 
 export default class MapRecord extends MapRecordBase {
