@@ -88,6 +88,8 @@ function resolveTankComponent(side: Side, level: TankLevel): TankComponent {
       component = PowerPlayerTank
     } else {
       component = ArmorPlayerTank
+  }} else if (level === 'boss') {
+    component = BossBotTank
     }
   } else {
     if (level === 'basic') {
@@ -670,6 +672,66 @@ const ArmorBotTank: TankComponent = ({ transform, color, shape }) => {
         <path d="M7,7 h1 v2 h-1 v1 h-1 v-2 h1 v-1" fill={c} />
         <path d="M8,8 h1 v2 h-2 v-1 h1 v-1" fill={a} />
       </g>
+    </g>
+  )
+}
+
+const BossBotTank: TankComponent = ({ transform, color, shape }) => {
+  const scheme = TANK_COLOR_SCHEMES['red']
+  const { a, b, c } = scheme
+  return (
+    <g className="tank8" transform={transform} scale="2">
+      <g className="left-tire">
+        <rect x={1} y={0} width={1} height={15} fill={a} />
+        <rect x={2} y={0} width={2} height={15} fill={b} />
+        {shape === 0 ? (
+          <g className="left-tire-shape0">
+            {_.range(7).map(i => (
+              <rect key={i} x={1} y={2 * i + 1} width={2} height={1} fill={c} />
+            ))}
+          </g>
+        ) : (
+          <g className="left-tire-shape1">
+            <Bitmap x={1} y={0} d={['bc']} scheme={scheme} />
+            {_.range(7).map(i => (
+              <rect key={i} x={1} y={2 * i + 2} width={2} height={1} fill={c} />
+            ))}
+          </g>
+        )}
+      </g>
+      <g className="right-tire">
+        <rect x={11} y={0} width={3} height={15} fill={b} />
+        <Pixel x={11} y={0} fill={a} />
+        <Pixel x={11} y={14} fill={c} />
+        {shape === 0 ? (
+          <g className="right-tire-shape0">
+            {_.range(7).map(i => (
+              <rect key={i} x={12} y={2 * i + 1} width={2} height={1} fill={c} />
+            ))}
+            <Pixel x={7} y={14} fill={b} />
+          </g>
+        ) : (
+          <g className="right-tire-shape1">
+            {_.range(8).map(i => (
+              <rect key={i} x={12} y={2 * i} width={2} height={1} fill={c} />
+            ))}
+            <Pixel x={7} y={14} fill={a} />
+          </g>
+        )}
+      </g>
+      <g className="tank-body">
+        <path d="M4,1 h2 v-1 h3 v1 h2 v4 h-1 v7 h-5 v1 h-1 v-12" fill={b} />
+        <path d="M6,0 h2 v6 h1 v-2 h1 v3 h-5 v5 h-1 v-9 h1 v2 h1 v1 h1 v-4 h-1 v-2" fill={a} />
+        <Pixel x={5} y={1} fill={c} />
+        <Pixel x={9} y={1} fill={c} />
+        <rect x={8} y={2} width={1} height={4} fill={c} />
+        <path d="M11,3 h1 v10 h-1 v-1 h-1 v-7 h1 v-2" fill={c} />
+        <path d="M4,13 h1 v-1 h5 v1 h1 v1 h-7 v-1" fill={c} />
+        <Pixel x={10} y={12} fill={b} />
+        <path d="M7,7 h1 v2 h-1 v1 h-1 v-2 h1 v-1" fill={c} />
+        <path d="M8,8 h1 v2 h-2 v-1 h1 v-1" fill={a} />
+      </g>
+      <rect className="gun" x={7} y={0} width={1} height={7} fill={a} />
     </g>
   )
 }

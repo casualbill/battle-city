@@ -277,7 +277,7 @@ export default class StageConfig extends StageConfigRecord {
       const count = Number(splited[0])
       const tankLevel = splited[1] as TankLevel
       DEV.ASSERT && console.assert(!isNaN(count))
-      DEV.ASSERT && console.assert(['basic', 'fast', 'power', 'armor'].includes(tankLevel))
+      DEV.ASSERT && console.assert(['basic', 'fast', 'power', 'armor', 'boss'].includes(tankLevel))
 
       array.push(new BotGroupConfig({ tankLevel, count }))
     }

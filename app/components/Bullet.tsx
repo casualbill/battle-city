@@ -5,21 +5,26 @@ import { Pixel } from './elements'
 const fill = '#ADADAD'
 
 const Bullet = ({ bullet }: { bullet: BulletRecord }) => {
-  const { direction, x, y } = bullet
+  const { direction, x, y, size } = bullet
+  const width = size
+  const height = size
   let head: JSX.Element = null
+  const halfSize = size / 2
+  
   if (direction === 'up') {
-    head = <Pixel x={1} y={-1} fill={fill} />
+    head = <Pixel x={halfSize - 0.5} y={-1} fill={fill} />
   } else if (direction === 'down') {
-    head = <Pixel x={1} y={3} fill={fill} />
+    head = <Pixel x={halfSize - 0.5} y={size} fill={fill} />
   } else if (direction === 'left') {
-    head = <Pixel x={-1} y={1} fill={fill} />
+    head = <Pixel x={-1} y={halfSize - 0.5} fill={fill} />
   } else {
     // right
-    head = <Pixel x={3} y={1} fill={fill} />
+    head = <Pixel x={size} y={halfSize - 0.5} fill={fill} />
   }
+  
   return (
     <g className="bullet" transform={`translate(${x},${y})`}>
-      <rect width={3} height={3} fill={fill} />
+      <rect width={width} height={height} fill={fill} />
       {head}
     </g>
   )

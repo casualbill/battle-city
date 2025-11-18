@@ -36,6 +36,7 @@ export default function* fireController(tankId: TankId, shouldFire: () => boolea
           lastX: x,
           lastY: y,
           power: values.bulletPower(tank),
+          size: tank.level === 'boss' ? 6 : 3,
           speed: values.bulletSpeed(tank),
           tankId: tank.tankId,
           side: tank.side,

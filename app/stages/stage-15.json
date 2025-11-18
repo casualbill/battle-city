@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "15",
   "difficulty": 2,
   "map": [
@@ -16,5 +16,5 @@
     "X  X  Bf X  F  B8 Bc B4 Bf F  B3 F  X  ",
     "X  X  B3 X  X  Ba E  B5 X  F  F  F  X  "
   ],
-  "bots": ["2*basic", "10*fast", "8*armor"]
+  "bots": ["1*boss"]
 }

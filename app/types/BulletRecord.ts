@@ -17,6 +17,8 @@ const BulletRecordBase = Record({
    * 强度大于等于2的子弹一下子可以破坏两倍的brick-wall
    * 强度为3的子弹可以破坏steel-wall */
   power: 1,
+  // 子弹的大小
+  size: 3,
   // 发射子弹的坦克id
   tankId: -1 as TankId,
   side: 'player' as Side,
