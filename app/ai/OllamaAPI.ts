@@ -51,7 +51,7 @@ export class OllamaAPI {
   private minCallInterval: number = 200; // 最小调用间隔（毫秒）
 
   constructor(config: OllamaConfig) {
-    this.apiUrl = config.apiUrl || 'http://localhost:11434';
+    this.apiUrl = config.apiUrl || 'http://localhost:11435';
     this.model = config.model || 'llama2';
     this.difficulty = config.difficulty || 'medium';
   }

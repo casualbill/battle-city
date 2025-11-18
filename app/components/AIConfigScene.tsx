@@ -110,11 +110,10 @@ export class AIConfigSceneContent extends React.PureComponent<
     const { difficulty, model } = this.state
     
     // 在这里保存AI配置
-    localStorage.setItem('aiDifficulty', difficulty)
-    localStorage.setItem('aiModel', model)
+    localStorage.setItem('aiConfig', JSON.stringify({ difficulty, model }))
     
-    // 进入游戏场景
-    push('/stage/stage-1?ai-combat')
+    // 进入关卡选择界面
+    push('/choose-stage?ai-combat')
   }
 
   render() {
