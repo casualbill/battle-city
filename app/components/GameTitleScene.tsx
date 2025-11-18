@@ -15,9 +15,9 @@ import { Tank } from './tanks'
 import Text from './Text'
 import TextButton from './TextButton'
 
-type Choice = 'single-player' | 'multi-players' | 'stage-list' | 'gallery'
+type Choice = 'single-player' | 'multi-players' | 'stage-list' | 'gallery' | 'fog-of-war'
 
-const CHOICES: Choice[] = ['single-player', 'multi-players', 'stage-list', 'gallery']
+const CHOICES: Choice[] = ['single-player', 'multi-players', 'stage-list', 'gallery', 'fog-of-war']
 
 function nextChoice(choice: Choice): Choice {
   const index = CHOICES.indexOf(choice)
@@ -29,9 +29,12 @@ function prevChoice(choice: Choice): Choice {
   return CHOICES[(index - 1 + CHOICES.length) % CHOICES.length]
 }
 
+import { toggleFogOfWar } from '../utils/actions'
+
 export class GameTitleSceneContent extends React.PureComponent<
   {
     push(url: string): void
+    dispatch: Dispatch
   },
   { choice: Choice }
 > {
@@ -60,15 +63,17 @@ export class GameTitleSceneContent extends React.PureComponent<
   }
 
   onChoose = (choice: Choice) => {
-    const { push } = this.props
+    const { push, dispatch } = this.props
     if (choice === 'stage-list') {
       push('/list')
     } else if (choice === 'single-player') {
       push('/choose')
     } else if (choice === 'multi-players') {
       push(`/choose?${MULTI_PLAYERS_SEARCH_KEY}`)
-    } else {
+    } else if (choice === 'gallery') {
       push('/gallery')
+    } else if (choice === 'fog-of-war') {
+      dispatch(toggleFogOfWar())
     }
   }
 
@@ -150,6 +155,14 @@ export class GameTitleSceneContent extends React.PureComponent<
           onMouseOver={() => this.setState({ choice: 'gallery' })}
           onClick={() => this.onChoose('gallery')}
         />
+        <TextButton
+          content="FOG OF WAR"
+          x={5.5 * B}
+          y={12 * B}
+          textFill="white"
+          onMouseOver={() => this.setState({ choice: 'fog-of-war' })}
+          onClick={() => this.onChoose('fog-of-war')}
+        />
         <Tank
           tank={
             new TankRecord({
@@ -179,7 +192,7 @@ class GameTitleScene extends React.PureComponent<GameTitleSceneProps> {
     const { dispatch } = this.props
     return (
       <Screen>
-        <GameTitleSceneContent push={url => dispatch(push(url))} />
+        <GameTitleSceneContent push={url => dispatch(push(url))} dispatch={dispatch} />
       </Screen>
     )
   }

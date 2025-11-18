@@ -55,8 +55,10 @@ const GameRecordBase = Record(
 
     /** stage-enter-curtain相关字段 */
     stageEnterCurtainT: 0,
-  },
-  'GameRecord',
+  /** 是否开启战争迷雾 */
+  fogOfWarEnabled: false,
+},
+'GameRecord',
 )
 
 // TODO 需要重构 game-record 的结构
@@ -119,6 +121,8 @@ export default function game(state = new GameRecord(), action: Action) {
     )
   } else if (action.type === A.SetIsSpawningBotTank) {
     return state.set('isSpawningBotTank', action.isSpawning)
+  } else if (action.type === A.ToggleFogOfWar) {
+    return state.set('fogOfWarEnabled', !state.fogOfWarEnabled)
   } else {
     return state
   }

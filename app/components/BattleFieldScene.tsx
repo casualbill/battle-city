@@ -7,6 +7,7 @@ import BrickLayer from './BrickLayer'
 import Bullet from './Bullet'
 import CurtainsContainer from './CurtainsContainer'
 import RestrictedAreaLayer from './dev-only/RestrictedAreaLayer'
+import FogOfWarLayer from './FogOfWarLayer'
 import SpotGraph from './dev-only/SpotGraph'
 import TankPath from './dev-only/TankPath'
 import Eagle from './Eagle'
@@ -59,6 +60,8 @@ export class BattleFieldContent extends React.PureComponent<Partial<State & Poin
         {/* 因为坦克/子弹可以"穿过"森林, 所以 <ForestLayer /> 需要放在 tank-layer 和 bullet-layer 的后面 */}
         <ForestLayer forests={forests} />
         <RestrictedAreaLayer areas={restrictedAreas} />
+        <FogOfWarLayer />
+        
         <g className="power-up-layer">
           {powerUps
             .map(powerUp => <PowerUp key={powerUp.powerUpId} powerUp={powerUp} />)

@@ -3,6 +3,7 @@ import * as actions from '../utils/actions'
 import { A } from '../utils/actions'
 import gameSaga from './gameSaga'
 import soundManager from './soundManager'
+import fogOfWarSaga from './fogOfWarSaga'
 import { syncFrom, syncTo } from './syncLocalStorage'
 
 export default function* rootSaga() {
@@ -12,6 +13,7 @@ export default function* rootSaga() {
   yield fork(soundManager)
   yield takeEvery(A.SyncCustomStages, syncTo)
   yield takeLatest([A.StartGame, A.ResetGame], gameSaga)
+  yield fogOfWarSaga()
 
   if (DEV.SKIP_CHOOSE_STAGE) {
     yield put(actions.startGame(0))
