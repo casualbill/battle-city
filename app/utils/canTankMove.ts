@@ -63,12 +63,28 @@ function isTankCollidedWithRestrictedAreas(
 
 // 判断 other 是否在 tank 前方
 function isInFront(other: TankRecord, tank: TankRecord) {
-  return (
-    (tank.direction === 'left' && other.x < tank.x) ||
-    (tank.direction === 'right' && other.x > tank.x) ||
-    (tank.direction === 'up' && other.y < tank.y) ||
-    (tank.direction === 'down' && other.y > tank.y)
-  )
+  const direction = tank.direction;
+  
+  switch (direction) {
+    case 'left':
+      return other.x < tank.x;
+    case 'right':
+      return other.x > tank.x;
+    case 'up':
+      return other.y < tank.y;
+    case 'down':
+      return other.y > tank.y;
+    case 'up-left':
+      return other.x < tank.x && other.y < tank.y;
+    case 'up-right':
+      return other.x > tank.x && other.y < tank.y;
+    case 'down-left':
+      return other.x < tank.x && other.y > tank.y;
+    case 'down-right':
+      return other.x > tank.x && other.y > tank.y;
+    default:
+      return false;
+  }
 }
 
 function isTankCollidedWithOtherTanks(

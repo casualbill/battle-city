@@ -29,13 +29,24 @@ function* handleTick() {
       continue
     }
     const updatedBullets = bullets.map(bullet => {
-      const { direction, speed } = bullet
+      const { direction, speed, x, y } = bullet
       const distance = speed * delta
-      const { xy, updater } = getDirectionInfo(direction)
+      const dirInfo = getDirectionInfo(direction)
+      
+      // Handle six-direction movement
+      let newX = x
+      let newY = y
+      
+      newX = dirInfo.updater(distance)(newX)
+      if (dirInfo.secondaryXy && dirInfo.secondaryUpdater) {
+        newY = dirInfo.secondaryUpdater(distance)(newY)
+      }
+      
       return bullet
-        .update(xy, updater(distance))
-        .set('lastX', bullet.x)
-        .set('lastY', bullet.y) // 设置子弹上一次的位置, 用于进行碰撞检测
+        .set('x', newX)
+        .set('y', newY)
+        .set('lastX', x)
+        .set('lastY', y) // 设置子弹上一次的位置, 用于进行碰撞检测
     })
     yield put(actions.updateBullets(updatedBullets))
   }

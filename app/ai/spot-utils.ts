@@ -30,7 +30,33 @@ export const down = (t: number) => {
   return row === N - 1 ? null : (row + 1) * N + col
 }
 
-export const dirs = [left, right, up, down]
+export const upLeft = (t: number) => {
+  const row = getRow(t)
+  const col = getCol(t)
+  return row === 0 || col === 0 ? null : (row - 1) * N + (col - 1)
+}
+
+export const upRight = (t: number) => {
+  const row = getRow(t)
+  const col = getCol(t)
+  return row === 0 || col === N - 1 ? null : (row - 1) * N + (col + 1)
+}
+
+export const downLeft = (t: number) => {
+  const row = getRow(t)
+  const col = getCol(t)
+  return row === N - 1 || col === 0 ? null : (row + 1) * N + (col - 1)
+}
+
+export const downRight = (t: number) => {
+  const row = getRow(t)
+  const col = getCol(t)
+  return row === N - 1 || col === N - 1 ? null : (row + 1) * N + (col + 1)
+}
+
+// Hexagonal grid has 6 neighbors: up, down, left, right, up-left, up-right, down-left, down-right
+// But in square grid mapping, we need to use appropriate directions
+export const dirs = [left, right, up, down, upLeft, upRight, downLeft, downRight]
 
 export function around(t: number) {
   return [
