@@ -1,12 +1,12 @@
 import React from 'react'
 import { List } from 'immutable'
 import { State } from '../types'
-import { BLOCK_SIZE as B, FIELD_SIZE, FIELD_BLOCK_SIZE, TANK_SIZE, BULLET_SIZE, TANK_COLOR_SCHEMES } from '../utils/constants'
+import { BLOCK_SIZE as B, N_MAP, FIELD_SIZE, FIELD_BLOCK_SIZE, TANK_SIZE, BULLET_SIZE, TANK_COLOR_SCHEMES } from '../utils/constants'
 import { frame as f } from '../utils/common'
 
 interface CanvasBattleFieldProps {
   gameState: State
-  canvasRef: HTMLCanvasElement | null
+  canvasRef: { current: HTMLCanvasElement | null }
 }
 
 export class CanvasBattleField extends React.Component<CanvasBattleFieldProps> {
@@ -15,11 +15,17 @@ export class CanvasBattleField extends React.Component<CanvasBattleFieldProps> {
   }
 
   componentDidMount() {
-    this.renderCanvas()
+    // Check if canvasRef is already available
+    if (this.props.canvasRef) {
+      this.renderCanvas()
+    } else {
+      // CanvasRef might not be set yet, wait for update
+      this.forceUpdate()
+    }
   }
 
   private renderCanvas() {
-    const canvas = this.props.canvasRef
+    const canvas = this.props.canvasRef.current
     if (!canvas) return
 
     const ctx = canvas.getContext('2d')
@@ -35,29 +41,45 @@ export class CanvasBattleField extends React.Component<CanvasBattleFieldProps> {
     ctx.fillStyle = '#000000'
     ctx.fillRect(B, B, FIELD_SIZE, FIELD_SIZE)
 
-    // Draw river layer
+    // Draw river layer (size: 16x16)
     ctx.fillStyle = '#0000FF'
-    map.rivers.forEach(river => {
-      ctx.fillRect(B + river.x, B + river.y, B, B)
+    map.rivers.forEach((isPresent, index) => {
+      if (isPresent) {
+        const x = (index % N_MAP.RIVER) * B
+        const y = Math.floor(index / N_MAP.RIVER) * B
+        ctx.fillRect(B + x, B + y, B, B)
+      }
     })
 
-    // Draw steel layer
+    // Draw steel layer (size: 8x8)
     ctx.fillStyle = '#808080'
-    map.steels.forEach(steel => {
-      ctx.fillRect(B + steel.x, B + steel.y, B, B)
+    map.steels.forEach((isPresent, index) => {
+      if (isPresent) {
+        const x = (index % N_MAP.STEEL) * 8
+        const y = Math.floor(index / N_MAP.STEEL) * 8
+        ctx.fillRect(B + x, B + y, 8, 8)
+      }
     })
 
-    // Draw brick layer
+    // Draw brick layer (size: 4x4)
     ctx.fillStyle = '#FFA500'
-    map.bricks.forEach(brick => {
-      ctx.fillRect(B + brick.x, B + brick.y, B, B)
+    map.bricks.forEach((isPresent, index) => {
+      if (isPresent) {
+        const x = (index % N_MAP.BRICK) * 4
+        const y = Math.floor(index / N_MAP.BRICK) * 4
+        ctx.fillRect(B + x, B + y, 4, 4)
+      }
     })
 
-    // Draw snow layer
+    // Draw snow layer (size: 16x16)
     ctx.fillStyle = '#FFFFFF'
     ctx.globalAlpha = 0.3
-    map.snows.forEach(snow => {
-      ctx.fillRect(B + snow.x, B + snow.y, B, B)
+    map.snows.forEach((isPresent, index) => {
+      if (isPresent) {
+        const x = (index % N_MAP.SNOW) * B
+        const y = Math.floor(index / N_MAP.SNOW) * B
+        ctx.fillRect(B + x, B + y, B, B)
+      }
     })
     ctx.globalAlpha = 1
 
@@ -171,11 +193,15 @@ export class CanvasBattleField extends React.Component<CanvasBattleFieldProps> {
       }
     })
 
-    // Draw forest layer
+    // Draw forest layer (size: 16x16)
     ctx.fillStyle = '#008000'
     ctx.globalAlpha = 0.5
-    map.forests.forEach(forest => {
-      ctx.fillRect(B + forest.x, B + forest.y, B, B)
+    map.forests.forEach((isPresent, index) => {
+      if (isPresent) {
+        const x = (index % N_MAP.FOREST) * B
+        const y = Math.floor(index / N_MAP.FOREST) * B
+        ctx.fillRect(B + x, B + y, B, B)
+      }
     })
     ctx.globalAlpha = 1
 
@@ -245,7 +271,7 @@ export class CanvasBattleField extends React.Component<CanvasBattleFieldProps> {
     }
   }
 
-  render() {
-    return null
+  render(): React.ReactNode {
+    return <div></div>
   }
 }

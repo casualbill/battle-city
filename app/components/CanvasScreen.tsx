@@ -1,5 +1,5 @@
 import React from 'react'
-import { SCREEN_HEIGHT, SCREEN_WIDTH, BLOCK_SIZE } from '../utils/constants'
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../utils/constants'
 
 export interface CanvasScreenProps {
   background?: string
@@ -16,19 +16,23 @@ export default class CanvasScreen extends React.Component<CanvasScreenProps> {
 
   componentDidMount() {
     if (this.canvasRef) {
-      const handleResize = () => {
-        const scale = Math.min(
-          window.innerWidth / SCREEN_WIDTH,
-          window.innerHeight / SCREEN_HEIGHT
-        )
-        if (this.canvasRef) {
-          this.canvasRef.style.width = `${SCREEN_WIDTH * scale}px`
-          this.canvasRef.style.height = `${SCREEN_HEIGHT * scale}px`
-        }
-      }
+      this.handleResize()
+      window.addEventListener('resize', this.handleResize)
+    }
+  }
 
-      handleResize()
-      window.addEventListener('resize', handleResize)
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize)
+  }
+
+  private handleResize = () => {
+    if (this.canvasRef) {
+      const scale = Math.min(
+        window.innerWidth / SCREEN_WIDTH,
+        window.innerHeight / SCREEN_HEIGHT
+      )
+      this.canvasRef.style.width = `${SCREEN_WIDTH * scale}px`
+      this.canvasRef.style.height = `${SCREEN_HEIGHT * scale}px`
     }
   }
 
