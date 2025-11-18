@@ -15,9 +15,9 @@ import { Tank } from './tanks'
 import Text from './Text'
 import TextButton from './TextButton'
 
-type Choice = 'single-player' | 'multi-players' | 'stage-list' | 'gallery'
+type Choice = 'single-player' | 'multi-players' | 'ai-combat' | 'stage-list' | 'gallery'
 
-const CHOICES: Choice[] = ['single-player', 'multi-players', 'stage-list', 'gallery']
+const CHOICES: Choice[] = ['single-player', 'multi-players', 'ai-combat', 'stage-list', 'gallery']
 
 function nextChoice(choice: Choice): Choice {
   const index = CHOICES.indexOf(choice)
@@ -67,6 +67,8 @@ export class GameTitleSceneContent extends React.PureComponent<
       push('/choose')
     } else if (choice === 'multi-players') {
       push(`/choose?${MULTI_PLAYERS_SEARCH_KEY}`)
+    } else if (choice === 'ai-combat') {
+      push('/ai-combat')
     } else {
       push('/gallery')
     }
@@ -135,9 +137,17 @@ export class GameTitleSceneContent extends React.PureComponent<
           onClick={() => this.onChoose('multi-players')}
         />
         <TextButton
-          content="stage list"
+          content="ai combat"
           x={5.5 * B}
           y={10 * B}
+          textFill="white"
+          onMouseOver={() => this.setState({ choice: 'ai-combat' })}
+          onClick={() => this.onChoose('ai-combat')}
+        />
+        <TextButton
+          content="stage list"
+          x={5.5 * B}
+          y={11 * B}
           textFill="white"
           onMouseOver={() => this.setState({ choice: 'stage-list' })}
           onClick={() => this.onChoose('stage-list')}
@@ -145,7 +155,7 @@ export class GameTitleSceneContent extends React.PureComponent<
         <TextButton
           content="gallery"
           x={5.5 * B}
-          y={11 * B}
+          y={12 * B}
           textFill="white"
           onMouseOver={() => this.setState({ choice: 'gallery' })}
           onClick={() => this.onChoose('gallery')}
