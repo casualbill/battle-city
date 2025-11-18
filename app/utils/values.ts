@@ -2,7 +2,9 @@ import { TankRecord } from '../types'
 
 namespace values {
   export function bulletPower(tank: TankRecord) {
-    if (tank.side === 'player' && tank.level === 'armor') {
+    if (tank.level === 'boss') {
+      return 2
+    } else if (tank.side === 'player' && tank.level === 'armor') {
       return 3
     } else if (tank.side === 'bot' && tank.level === 'power') {
       return 2
@@ -13,7 +15,10 @@ namespace values {
 
   export function moveSpeed(tank: TankRecord) {
     // todo 需要校准数值
-    if (tank.side === 'player') {
+    if (tank.level === 'boss') {
+      // BOSS坦克移动速度为普通坦克的30-60%
+      return 0.02
+    } else if (tank.side === 'player') {
       return DEV.FAST ? 0.06 : 0.045
     } else {
       if (tank.level === 'power') {
@@ -29,7 +34,10 @@ namespace values {
 
   export function bulletInterval(tank: TankRecord) {
     // todo 需要校准数值
-    if (tank.level === 'basic') {
+    if (tank.level === 'boss') {
+      // BOSS坦克开火频率为普通坦克的150-250%
+      return 120
+    } else if (tank.level === 'basic') {
       return 300
     } else {
       return 200
@@ -46,7 +54,10 @@ namespace values {
 
   export function bulletSpeed(tank: TankRecord) {
     // todo 需要校准数值
-    if (tank.side === 'player') {
+    if (tank.level === 'boss') {
+      // BOSS坦克炮弹速度可以适当提高
+      return 0.24
+    } else if (tank.side === 'player') {
       if (DEV.FAST) {
         return 0.3
       }

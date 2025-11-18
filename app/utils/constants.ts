@@ -10,6 +10,8 @@ export const FIELD_BLOCK_SIZE = 13
 export const FIELD_SIZE = BLOCK_SIZE * FIELD_BLOCK_SIZE
 /** 子弹的大小 */
 export const BULLET_SIZE = 3
+/** BOSS子弹的大小 */
+export const BOSS_BULLET_SIZE = 6
 /** 摧毁steel的最低子弹power值 */
 export const STEEL_POWER = 3
 
@@ -105,7 +107,7 @@ export const PLAYER_CONFIGS: { [key: string]: PlayerConfig } = {
   },
 }
 
-export const TANK_LEVELS: TankLevel[] = ['basic', 'fast', 'power', 'armor']
+export const TANK_LEVELS: TankLevel[] = ['basic', 'fast', 'power', 'armor', 'boss']
 
 export const POWER_UP_NAMES: PowerUpName[] = [
   'tank',

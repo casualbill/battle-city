@@ -25,7 +25,7 @@ function* addBotHelper() {
         }
         yield put(actions.removeFirstRemainingBot())
         const level = game.remainingBots.first()
-        const hp = level === 'armor' ? 4 : 1
+        const hp = level === 'boss' ? 10 : (level === 'armor' ? 4 : 1)
         const tank = new TankRecord({
           tankId: getNextId('tank'),
           x: spawnPos.x,
