@@ -98,12 +98,12 @@ function isTankCollidedWithOtherTanks(
 export default function canTankMove(state: State, tank: TankRecord, threshhold = -0.01) {
   const {
     tanks,
-    map: { bricks, steels, rivers, eagle, restrictedAreas },
+    map: { bricks, steels, rivers, eagle, restrictedAreas, size },
   } = state
   const tankRect = asRect(tank)
 
   // 判断是否位于战场内
-  if (!isInField(tankRect)) {
+  if (!isInField(tankRect, size, BLOCK_SIZE)) {
     return false
   }
 

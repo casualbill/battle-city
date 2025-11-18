@@ -20,11 +20,12 @@ export interface EditorStageConfig {
 }
 
 function serializeMapItemList(list: List<MapItem>): string[] {
+  const size = FIELD_BLOCK_SIZE;
   const result: string[] = []
-  for (let row = 0; row < FIELD_BLOCK_SIZE; row += 1) {
+  for (let row = 0; row < size; row += 1) {
     const array: string[] = []
-    for (let col = 0; col < FIELD_BLOCK_SIZE; col += 1) {
-      const { type, hex } = list.get(row * FIELD_BLOCK_SIZE + col)
+    for (let col = 0; col < size; col += 1) {
+      const { type, hex } = list.get(row * size + col)
       if (type === 'B') {
         if (hex > 0) {
           array.push('B' + hex.toString(16))
@@ -172,9 +173,10 @@ export default class StageConfig extends StageConfigRecord {
     const snows = new Set<number>()
     const forests = new Set<number>()
     let eaglePos: Point = null
-    for (let row = 0; row < FIELD_BLOCK_SIZE; row += 1) {
+    const size = map.length;
+    for (let row = 0; row < size; row += 1) {
       const line = map[row].toLowerCase().split(/ +/)
-      for (let col = 0; col < FIELD_BLOCK_SIZE; col += 1) {
+      for (let col = 0; col < size; col += 1) {
         const item = line[col].trim()
         if (item[0] === 'b') {
           // brick
@@ -250,21 +252,22 @@ export default class StageConfig extends StageConfigRecord {
             broken: false,
           })
         : null,
-      bricks: Repeat(false, N_MAP.BRICK ** 2)
+      bricks: Repeat(false, (size * 4) ** 2)
         .map((set, index) => bricks.has(index))
         .toList(),
-      steels: Repeat(false, N_MAP.STEEL ** 2)
+      steels: Repeat(false, (size * 2) ** 2)
         .map((set, index) => steels.has(index))
         .toList(),
-      rivers: Repeat(false, N_MAP.RIVER ** 2)
+      rivers: Repeat(false, size ** 2)
         .map((set, index) => rivers.has(index))
         .toList(),
-      snows: Repeat(false, N_MAP.SNOW ** 2)
+      snows: Repeat(false, size ** 2)
         .map((set, index) => snows.has(index))
         .toList(),
-      forests: Repeat(false, N_MAP.FOREST ** 2)
+      forests: Repeat(false, size ** 2)
         .map((set, index) => forests.has(index))
         .toList(),
+      size: size,
     })
   }
 
@@ -290,48 +293,50 @@ export default class StageConfig extends StageConfigRecord {
 export namespace StageConfigConverter {
   // stage-to-editor
   export function s2e(stage: StageConfig): EditorStageConfig {
-    const items = new Array<MapItem>(FIELD_BLOCK_SIZE ** 2)
-    items.fill(new MapItem())
-    const { bricks, steels, snows, forests, rivers, eagle } = stage.map
+    const { map } = stage;
+    const size = map.size;
+    const items = new Array<MapItem>(size ** 2);
+    items.fill(new MapItem());
+    const { bricks, steels, snows, forests, rivers, eagle } = map;
     bricks.forEach((set, brickT) => {
       if (set) {
-        const [brickRow, brickCol] = IndexHelper.getRowCol('brick', brickT)
-        const t = Math.floor(brickRow / 4) * FIELD_BLOCK_SIZE + Math.floor(brickCol / 4)
-        const hex = 0b0001 << (2 * (Math.floor(brickRow / 2) % 2) + (Math.floor(brickCol / 2) % 2))
+        const [brickRow, brickCol] = IndexHelper.getRowCol('brick', brickT);
+        const t = Math.floor(brickRow / 4) * size + Math.floor(brickCol / 4);
+        const hex = 0b0001 << (2 * (Math.floor(brickRow / 2) % 2) + (Math.floor(brickCol / 2) % 2));
         if (items[t].type === 'B') {
-          items[t] = items[t].update('hex', or(hex))
+          items[t] = items[t].update('hex', or(hex));
         } else {
-          items[t] = new MapItem({ type: 'B', hex })
+          items[t] = new MapItem({ type: 'B', hex });
         }
       }
-    })
+    });
     steels.forEach((set, steelT) => {
       if (set) {
-        const [steelRow, steelCol] = IndexHelper.getRowCol('steel', steelT)
-        const t = Math.floor(steelRow / 2) * FIELD_BLOCK_SIZE + Math.floor(steelCol / 2)
-        const hex = 0b0001 << (2 * (steelRow % 2) + (steelCol % 2))
+        const [steelRow, steelCol] = IndexHelper.getRowCol('steel', steelT);
+        const t = Math.floor(steelRow / 2) * size + Math.floor(steelCol / 2);
+        const hex = 0b0001 << (2 * (steelRow % 2) + (steelCol % 2));
         if (items[t].type === 'T') {
-          items[t] = items[t].update('hex', or(hex))
+          items[t] = items[t].update('hex', or(hex));
         } else {
-          items[t] = new MapItem({ type: 'T', hex })
+          items[t] = new MapItem({ type: 'T', hex });
         }
       }
-    })
+    });
     rivers.forEach((set, t) => {
-      if (set) items[t] = new MapItem({ type: 'R' })
-    })
+      if (set) items[t] = new MapItem({ type: 'R' });
+    });
     forests.forEach((set, t) => {
-      if (set) items[t] = new MapItem({ type: 'F' })
-    })
+      if (set) items[t] = new MapItem({ type: 'F' });
+    });
     snows.forEach((set, t) => {
-      if (set) items[t] = new MapItem({ type: 'S' })
-    })
+      if (set) items[t] = new MapItem({ type: 'S' });
+    });
 
     if (eagle != null) {
-      const { x, y } = eagle
-      const row = Math.floor(y / BLOCK_SIZE)
-      const col = Math.floor(x / BLOCK_SIZE)
-      items[row * FIELD_BLOCK_SIZE + col] = new MapItem({ type: 'E' })
+      const { x, y } = eagle;
+      const row = Math.floor(y / BLOCK_SIZE);
+      const col = Math.floor(x / BLOCK_SIZE);
+      items[row * size + col] = new MapItem({ type: 'E' });
     }
 
     return {
@@ -340,7 +345,7 @@ export namespace StageConfigConverter {
       difficulty: stage.difficulty,
       itemList: List(items),
       bots: stage.bots,
-    }
+    };
   }
 
   // stage-to-raw
@@ -350,9 +355,72 @@ export namespace StageConfigConverter {
 
   // editor-to-stage
   export function e2s(editorStageConfig: EditorStageConfig): StageConfig {
-    const { name, custom, difficulty, itemList, bots } = editorStageConfig
-    const map = StageConfig.parseStageMap(serializeMapItemList(itemList))
-    return new StageConfig({ name, difficulty, custom, map, bots: bots })
+    const bricks = new Set<number>()
+    const steels = new Set<number>()
+    const rivers = new Set<number>()
+    const snows = new Set<number>()
+    const forests = new Set<number>()
+    let eaglePos: Point = null
+    const { itemList } = editorStageConfig
+    const size = Math.sqrt(itemList.size);
+    for (let row = 0; row < size; row += 1) {
+      for (let col = 0; col < size; col += 1) {
+        const t = row * size + col
+        const item = itemList.get(t)
+        if (item.type === 'B') {
+          if (!!(item.hex & 0b0001)) bricks.add(row * 4 * size * 4 + col * 4)
+          if (!!(item.hex & 0b0010)) bricks.add(row * 4 * size * 4 + col * 4 + 1)
+          if (!!(item.hex & 0b0100)) bricks.add((row * 4 + 1) * size * 4 + col * 4)
+          if (!!(item.hex & 0b1000)) bricks.add((row * 4 + 1) * size * 4 + col * 4 + 1)
+        } else if (item.type === 'T') {
+          if (!!(item.hex & 0b0001)) steels.add(row * 2 * size * 2 + col * 2)
+          if (!!(item.hex & 0b0010)) steels.add(row * 2 * size * 2 + col * 2 + 1)
+          if (!!(item.hex & 0b0100)) steels.add((row * 2 + 1) * size * 2 + col * 2)
+          if (!!(item.hex & 0b1000)) steels.add((row * 2 + 1) * size * 2 + col * 2 + 1)
+        } else if (item.type === 'R') {
+          rivers.add(t)
+        } else if (item.type === 'F') {
+          forests.add(t)
+        } else if (item.type === 'S') {
+          snows.add(t)
+        } else if (item.type === 'E') {
+          eaglePos = { x: col * BLOCK_SIZE, y: row * BLOCK_SIZE }
+        }
+      }
+    }
+
+    const { name, custom, difficulty, bots } = editorStageConfig;
+    return new StageConfig({
+      name,
+      difficulty,
+      custom,
+      bots,
+      map: new MapRecord({
+        eagle: eaglePos
+          ? new EagleRecord({
+              x: eaglePos.x,
+              y: eaglePos.y,
+              broken: false,
+            })
+          : null,
+        bricks: Repeat(false, (size * 4) ** 2)
+          .map((set, index) => bricks.has(index))
+          .toList(),
+        steels: Repeat(false, (size * 2) ** 2)
+          .map((set, index) => steels.has(index))
+          .toList(),
+        rivers: Repeat(false, size ** 2)
+          .map((set, index) => rivers.has(index))
+          .toList(),
+        snows: Repeat(false, size ** 2)
+          .map((set, index) => snows.has(index))
+          .toList(),
+        forests: Repeat(false, size ** 2)
+          .map((set, index) => forests.has(index))
+          .toList(),
+        size: size,
+      })
+    });
   }
 
   // editor-to-raw
