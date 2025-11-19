@@ -138,10 +138,16 @@ export default React.createClass({
 
     // 获取游戏状态
     const { state } = this.props;
-    const terrain = state.terrain;
+    const map = state.map;
     const tanks = state.tanks;
     const bullets = state.bullets;
-    const eagle = state.eagle;
+    const eagle = map.eagle;
+    const terrain = {
+      bricks: map.bricks,
+      steels: map.steels,
+      rivers: map.rivers,
+      forests: map.forests
+    };
 
     // 创建几何体和材质
     const blockGeometry = new THREE.BoxGeometry(B, B / 2, B);
