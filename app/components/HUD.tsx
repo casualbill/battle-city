@@ -23,8 +23,9 @@ interface HUDContentProps {
 export class HUDContent extends React.PureComponent<HUDContentProps> {
   renderPlayer1Info() {
     const { player1, player1Tank } = this.props
+
     return (
-      <g className="player-1-info">
+      <g>
         <Text x={0} y={0} content={'ⅠP'} fill="#000000" />
         <PlayerTankThumbnail x={0} y={0.5 * B} />
         <Text x={0.5 * B} y={0.5 * B} content={String(player1.lives)} fill="#000000" />
@@ -84,8 +85,7 @@ export class HUDContent extends React.PureComponent<HUDContentProps> {
           y={B + 2}
           content={`${Math.round(energy)}`}
           fill="#000000"
-          fontSize="10"
-          style={blinkStyle}
+          style={{ fontSize: 10, ...blinkStyle }}
         />
       </g>
     )
@@ -124,5 +124,5 @@ function mapStateToProps(state: State) {
 }
 
 export default connect(mapStateToProps)((props: HUDContentProps) => (
-  <HUDContent x={FIELD_SIZE + 1.5 * B} y={1.5 * B} {...props} />
+  <HUDContent x={FIELD_SIZE - 5 * B} y={1.5 * B} {...props} />
 ))
