@@ -50,7 +50,7 @@ export default function* directionController(
         yield put(actions.move(tank.set('direction', input.direction)))
       }
     } else if (input.type === 'forward') {
-      if (tank.frozenTimeout === 0) {
+      if (tank.frozenTimeout === 0 && tank.paralyzedTimeout === 0 && tank.energy > 0) {
         const speed = values.moveSpeed(tank)
         const distance = Math.min(delta * speed, input.maxDistance || Infinity)
 
@@ -62,6 +62,9 @@ export default function* directionController(
           if (!tank.moving) {
             yield put(actions.startMove(tank.tankId))
           }
+          // 移动消耗能量：每移动1秒消耗5点能量
+          const energyConsumed = delta * 5 / 1000
+          yield put(actions.setEnergy(tankId, tank.energy - energyConsumed))
         }
       }
     } else {

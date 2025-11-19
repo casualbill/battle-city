@@ -100,6 +100,10 @@ export enum A {
   SyncCustomStages = 'SyncCustomStages',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
+  SetEnergy = 'SetEnergy',
+  SetOverloading = 'SetOverloading',
+  SetOverloadChargeTime = 'SetOverloadChargeTime',
+  SetParalyzedTimeout = 'SetParalyzedTimeout',
 }
 
 export type Move = ReturnType<typeof move>
@@ -622,6 +626,42 @@ export function playSound(soundName: SoundName) {
   return {
     type: A.PlaySound as A.PlaySound,
     soundName,
+  }
+}
+
+export type SetEnergy = ReturnType<typeof setEnergy>
+export function setEnergy(tankId: TankId, energy: number) {
+  return {
+    type: A.SetEnergy as A.SetEnergy,
+    tankId,
+    energy,
+  }
+}
+
+export type SetOverloading = ReturnType<typeof setOverloading>
+export function setOverloading(tankId: TankId, overloading: boolean) {
+  return {
+    type: A.SetOverloading as A.SetOverloading,
+    tankId,
+    overloading,
+  }
+}
+
+export type SetOverloadChargeTime = ReturnType<typeof setOverloadChargeTime>
+export function setOverloadChargeTime(tankId: TankId, overloadChargeTime: number) {
+  return {
+    type: A.SetOverloadChargeTime as A.SetOverloadChargeTime,
+    tankId,
+    overloadChargeTime,
+  }
+}
+
+export type SetParalyzedTimeout = ReturnType<typeof setParalyzedTimeout>
+export function setParalyzedTimeout(tankId: TankId, paralyzedTimeout: number) {
+  return {
+    type: A.SetParalyzedTimeout as A.SetParalyzedTimeout,
+    tankId,
+    paralyzedTimeout,
   }
 }
 
