@@ -98,6 +98,9 @@ export enum A {
   RemoveCustomStage = 'RemoveCustomStage',
   SetEditorContent = 'SetEditorContent',
   SyncCustomStages = 'SyncCustomStages',
+  ResetFogOfWar = 'ResetFogOfWar',
+  UpdateFogOfWar = 'UpdateFogOfWar',
+  ToggleFogOfWar = 'ToggleFogOfWar',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
 }
@@ -678,6 +681,15 @@ export const clearBullets = () => ({ type: A.ClearBullets as A.ClearBullets })
 export type SyncCustomStages = ReturnType<typeof syncCustomStages>
 export const syncCustomStages = () => ({ type: A.SyncCustomStages as A.SyncCustomStages })
 
+export type ResetFogOfWar = ReturnType<typeof resetFogOfWar>
+export const resetFogOfWar = () => ({ type: A.ResetFogOfWar as A.ResetFogOfWar })
+
+export type UpdateFogOfWar = ReturnType<typeof updateFogOfWar>
+export const updateFogOfWar = (visible: any) => ({ type: A.UpdateFogOfWar as A.UpdateFogOfWar, visible })
+
+export type ToggleFogOfWar = ReturnType<typeof toggleFogOfWar>
+export const toggleFogOfWar = () => ({ type: A.ToggleFogOfWar as A.ToggleFogOfWar })
+
 export type LeaveGameScene = ReturnType<typeof leaveGameScene>
 export const leaveGameScene = () => ({ type: A.LeaveGameScene as A.LeaveGameScene })
 
@@ -760,6 +772,9 @@ export type Action =
   | SetCustomStage
   | RemoveCustomStage
   | SetEditorContent
+  | ResetFogOfWar
+  | UpdateFogOfWar
+  | ToggleFogOfWar
   | SyncCustomStages
   | LeaveGameScene
   | PlaySound

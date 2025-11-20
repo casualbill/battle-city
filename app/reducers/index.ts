@@ -17,6 +17,7 @@ import scores, { ScoresMap } from './scores'
 import stages from './stages'
 import tanks, { TanksMap } from './tanks'
 import texts, { TextsMap } from './texts'
+import fogOfWar, { FogOfWarRecord } from './fogOfWar'
 
 export interface State {
   router: any
@@ -34,6 +35,7 @@ export interface State {
   scores: ScoresMap
   stages: List<StageConfig>
   editorContent: StageConfig
+  fogOfWar: FogOfWarRecord
   devOnly: any
 }
 
@@ -59,11 +61,12 @@ export default combineReducers<State>({
   player1,
   player2,
   bullets,
-  map,
-  time,
   explosions,
-  flickers,
+  map,
+  fogOfWar,
+  time,
   tanks,
+  flickers,
   texts,
   powerUps,
   scores,
