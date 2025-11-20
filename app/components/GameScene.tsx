@@ -1,7 +1,7 @@
 import { List } from 'immutable'
-import React from 'react'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { match } from 'react-router-dom'
+import { match, withRouter, RouteComponentProps } from 'react-router-dom'
 import { Dispatch } from 'redux'
 import { GameRecord } from '../reducers/game'
 import { State } from '../types'
@@ -9,21 +9,36 @@ import StageConfig from '../types/StageConfig'
 import * as actions from '../utils/actions'
 import BattleFieldScene from './BattleFieldScene'
 import StatisticsScene from './StatisticsScene'
+import ModelLoadingScene from './ModelLoadingScene'
+import { isAIAssistantMode } from '../utils/selectors';
 
 export interface GameSceneProps {
   game: GameRecord
   stages: List<StageConfig>
   dispatch: Dispatch
   match: match<any>
+  location: Location
 }
 
 class GameScene extends React.PureComponent<GameSceneProps> {
+  state = {
+    modelLoaded: false
+  }
+
   componentDidMount() {
-    this.didMountOrUpdate()
+    const { location } = this.props
+    const isAI = isAIAssistantMode({ router: { location } } as any)
+    if (!isAI) {
+      this.didMountOrUpdate()
+    }
   }
 
   componentDidUpdate() {
-    this.didMountOrUpdate()
+    const { location } = this.props
+    const isAI = isAIAssistantMode({ router: { location } } as any)
+    if (!isAI && this.state.modelLoaded) {
+      this.didMountOrUpdate()
+    }
   }
 
   didMountOrUpdate() {
@@ -52,10 +67,21 @@ class GameScene extends React.PureComponent<GameSceneProps> {
     this.props.dispatch(actions.leaveGameScene())
   }
 
+  handleModelLoaded = () => {
+    this.setState({ modelLoaded: true })
+    // 模型加载完成后开始游戏
+    this.didMountOrUpdate()
+  }
+
   render() {
-    const { game } = this.props
+    const { game, location } = this.props
+    const { modelLoaded } = this.state
+    const isAI = isAIAssistantMode({ router: { location } } as any)
+
     if (game.status === 'stat') {
       return <StatisticsScene />
+    } else if (isAI && !modelLoaded) {
+      return <ModelLoadingScene onModelLoaded={this.handleModelLoaded} />
     } else {
       return <BattleFieldScene />
     }
@@ -66,4 +92,4 @@ function mapStateToProps(state: State) {
   return { game: state.game, stages: state.stages }
 }
 
-export default connect(mapStateToProps)(GameScene) as any
+export default withRouter(connect(mapStateToProps)(GameScene)) as any

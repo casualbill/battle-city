@@ -1,18 +1,18 @@
 import _ from 'lodash'
 import { PlayerRecord, State, TankFireInfo } from '../types'
 import { asRect, testCollide } from './common'
-import {
-  BLOCK_SIZE as B,
-  FIELD_BLOCK_SIZE as FBZ,
-  MULTI_PLAYERS_SEARCH_KEY,
-  TANK_SIZE,
-} from './constants'
+import { BLOCK_SIZE as B, FIELD_BLOCK_SIZE as FBZ, MULTI_PLAYERS_SEARCH_KEY, AI_ASSISTANT_SEARCH_KEY, TANK_SIZE } from './constants'
 import IndexHelper from './IndexHelper'
 import values from './values'
 
 export const isInMultiPlayersMode = (state: State) => {
   const params = new URLSearchParams(state.router.location.search)
   return params.has(MULTI_PLAYERS_SEARCH_KEY)
+}
+
+export const isAIAssistantMode = (state: State) => {
+  const params = new URLSearchParams(state.router.location.search)
+  return params.has(AI_ASSISTANT_SEARCH_KEY)
 }
 
 function isPlayerDead(player: PlayerRecord) {

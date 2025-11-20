@@ -18,6 +18,7 @@ export const SCREEN_WIDTH = 16 * BLOCK_SIZE
 export const SCREEN_HEIGHT = 15 * BLOCK_SIZE
 
 export const MULTI_PLAYERS_SEARCH_KEY = 'multi-players'
+export const AI_ASSISTANT_SEARCH_KEY = 'ai-assistant'
 
 /**
  * 坦克的配色方案

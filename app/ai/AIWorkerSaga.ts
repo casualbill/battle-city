@@ -1,6 +1,6 @@
 import { Map as IMap } from 'immutable'
-import { Task } from 'redux-saga'
-import { fork, race, select, take } from 'redux-saga/effects'
+import { Task } from 'redux-saga'  
+import { call, fork, race, select, take } from 'redux-saga/effects'
 import { State } from '../reducers'
 import { TankFireInfo, TankRecord } from '../types'
 import * as actions from '../utils/actions'
@@ -10,6 +10,7 @@ import { BLOCK_DISTANCE_THRESHOLD, BLOCK_TIMEOUT } from '../utils/constants'
 import * as selectors from '../utils/selectors'
 import Timing from '../utils/Timing'
 import Bot from './Bot'
+import { webLLMManager } from './WebLLMManager'
 import * as dodgeUtils from './dodge-utils'
 import { getEnv, RelativePosition } from './env-utils'
 import { calculateFireEstimateMap, FireEstimate, getAIFireCount, getFireResist } from './fire-utils'
@@ -158,18 +159,48 @@ function* blocked(ctx: Bot) {
 export default function* AIWorkerSaga(ctx: Bot) {
   yield fork(dangerDetectionLoop, ctx)
 
-  let continuousWanderCount = 0
   while (true) {
-    yield race<any>([blocked(ctx), mode()])
+    yield race<any>([blocked(ctx), aiDecisionMode()])
   }
 
-  function* mode() {
-    if (Math.random() < 0.9 - continuousWanderCount * 0.02) {
-      continuousWanderCount++
-      yield wanderMode(ctx)
-    } else {
-      continuousWanderCount = 0
-      yield attackEagleMode(ctx)
+  function* aiDecisionMode() {
+    try {
+      if (webLLMManager.isModelLoaded()) {
+        const state: State = yield select()
+        const tank: TankRecord = yield select(selectors.tank, ctx.tankId)
+        
+        if (!tank || !tank.alive) {
+          yield Timing.delay(500)
+          return
+        }
+
+        // 使用WebLLM生成决策
+        const decision = yield call(webLLMManager.generateAIDecision, state, tank)
+
+        if (decision.direction) {
+          ctx.turn(decision.direction)
+        }
+
+        if (decision.fire) {
+          ctx.fire()
+        }
+
+        // AI决策间隔200-500ms
+        yield Timing.delay(Math.random() * 300 + 200)
+      } else {
+        // 模型未加载时使用默认AI行为
+        let continuousWanderCount = 0
+        if (Math.random() < 0.9 - continuousWanderCount * 0.02) {
+          continuousWanderCount++
+          yield wanderMode(ctx)
+        } else {
+          continuousWanderCount = 0
+          yield attackEagleMode(ctx)
+        }
+      }
+    } catch (error) {
+      console.error('AI决策错误:', error)
+      yield Timing.delay(500)
     }
   }
 }

@@ -8,6 +8,7 @@
     "build": "webpack --mode=production && copyfiles sound/* dist"
   },
   "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.79",
     "@types/history": "^4.6.2",
     "@types/lodash": "^4.14.105",
     "@types/node": "^10.9.4",

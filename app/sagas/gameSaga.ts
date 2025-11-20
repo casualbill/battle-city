@@ -13,6 +13,7 @@ import botMasterSaga from './botMasterSaga'
 import bulletsSaga from './bulletsSaga'
 import animateTexts from './common/animateTexts'
 import playerSaga from './playerSaga'
+import aiPlayerSaga from './aiPlayerSaga'
 import powerUpManager from './powerUpManager'
 import stageSaga, { StageResult } from './stageSaga'
 import tickEmitter from './tickEmitter'
@@ -84,6 +85,9 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
   const players = [playerSaga('player-1', PLAYER_CONFIGS.player1)]
   if (yield select(selectors.isInMultiPlayersMode)) {
     players.push(playerSaga('player-2', PLAYER_CONFIGS.player2))
+  } else if (yield select(selectors.isAIAssistantMode)) {
+    // AI助手模式下，玩家2由AI控制
+    players.push(aiPlayerSaga('player-2', PLAYER_CONFIGS.player2))
   }
 
   const result = yield race({
