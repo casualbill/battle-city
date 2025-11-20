@@ -7,6 +7,7 @@ import * as selectors from '../utils/selectors'
 import BotCountIndicator from './BotCountIndicator'
 import { PlayerTankThumbnail } from './icons'
 import Text from './Text'
+import Minimap from './Minimap'
 
 interface HUDContentProps {
   x?: number
@@ -51,6 +52,10 @@ export class HUDContent extends React.PureComponent<HUDContentProps> {
         <g transform={`translate(0, ${6 * B})`}>
           {this.renderPlayer1Info()}
           {inMultiPlayersMode && this.renderPlayer2Info()}
+        </g>
+        {/* 右下角小地图 */}
+        <g transform={`translate(${B}, ${11 * B})`}>
+          <Minimap />
         </g>
       </g>
     )
