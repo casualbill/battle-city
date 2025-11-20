@@ -1,21 +1,41 @@
 import React from 'react'
 import Image from '../hocs/Image'
+import Hexagon from './Hexagon'
+import { ITEM_SIZE_MAP } from '../utils/constants'
 
 export default class SteelWall extends React.PureComponent<Point> {
   render() {
-    const { x, y } = this.props
+    const { x, y } = this.props;
+    const size = ITEM_SIZE_MAP.STEEL / 2;
+    
     return (
       <Image
         className="steelwall"
         imageKey="steelwall"
         transform={`translate(${x}, ${y})`}
-        width="8"
-        height="8"
+        width={Math.sqrt(3) * size * 2}
+        height={size * 2}
       >
-        <rect width={8} height={8} fill="#ADADAD" />
-        <rect x={2} y={2} width={4} height={4} fill="#FFFFFF" />
-        <path d="M6,2 h1 v-1 h1 v7 h-7 v-1 h1 v-1 h4 v-4" fill="#636363" />
+        <Hexagon
+          x={0}
+          y={0}
+          size={size}
+          fill="#ADADAD"
+        />
+        {/* 添加六边形钢墙的纹理效果 */}
+        <Hexagon
+          x={0}
+          y={0}
+          size={size * 0.8}
+          fill="#FFFFFF"
+        />
+        <Hexagon
+          x={0}
+          y={0}
+          size={size * 0.6}
+          fill="#636363"
+        />
       </Image>
-    )
+    );
   }
 }

@@ -12,27 +12,33 @@ interface RiverLayerProps {
 
 class RiverLayer extends React.PureComponent<RiverLayerProps> {
   render() {
-    const { rivers, tickIndex } = this.props
+    const { rivers, tickIndex } = this.props;
+    // 六边形网格布局参数
+    const hexWidth = Math.sqrt(3) * ITEM_SIZE_MAP.RIVER;
+    const hexHeight = 2 * ITEM_SIZE_MAP.RIVER;
 
     return (
       <g className="river-layer">
         {rivers.map((set, t) => {
           if (set) {
-            const [row, col] = getRowCol(t, N_MAP.RIVER)
+            const [row, col] = getRowCol(t, N_MAP.RIVER);
+            // 计算六边形坐标
+            const x = col * (hexWidth * 3/4);
+            const y = row * hexHeight + (col % 2) * (hexHeight / 2);
             return (
               <River
                 key={t}
-                x={col * ITEM_SIZE_MAP.RIVER}
-                y={row * ITEM_SIZE_MAP.RIVER}
+                x={x}
+                y={y}
                 shape={tickIndex as 0 | 1}
               />
-            )
+            );
           } else {
-            return null
+            return null;
           }
         })}
       </g>
-    )
+    );
   }
 }
 
