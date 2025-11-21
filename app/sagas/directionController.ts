@@ -54,8 +54,18 @@ export default function* directionController(
         const speed = values.moveSpeed(tank)
         const distance = Math.min(delta * speed, input.maxDistance || Infinity)
 
-        const { xy, updater } = getDirectionInfo(tank.direction)
-        const movedTank = tank.update(xy, updater(distance))
+        const dirInfo = getDirectionInfo(tank.direction)
+        
+        // Handle six-direction movement
+        let newX = tank.x
+        let newY = tank.y
+        
+        newX = dirInfo.updater(distance)(newX)
+        if (dirInfo.secondaryXy && dirInfo.secondaryUpdater) {
+          newY = dirInfo.secondaryUpdater(distance)(newY)
+        }
+        
+        const movedTank = tank.set('x', newX).set('y', newY)
         if (yield select(canTankMove, movedTank)) {
           const reservedTank: TankRecord = yield getReservedTank(movedTank)
           yield put(actions.move(movedTank.merge({ rx: reservedTank.x, ry: reservedTank.y })))

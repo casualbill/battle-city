@@ -82,6 +82,10 @@ export const PLAYER_CONFIGS: { [key: string]: PlayerConfig } = {
       left: 'KeyA',
       down: 'KeyS',
       right: 'KeyD',
+      upLeft: 'KeyQ',
+      upRight: 'KeyE',
+      downLeft: 'KeyA',
+      downRight: 'KeyD',
       fire: 'KeyJ',
     },
     spawnPos: {
@@ -96,6 +100,10 @@ export const PLAYER_CONFIGS: { [key: string]: PlayerConfig } = {
       left: 'ArrowLeft',
       down: 'ArrowDown',
       right: 'ArrowRight',
+      upLeft: 'KeyQ',
+      upRight: 'KeyE',
+      downLeft: 'KeyA',
+      downRight: 'KeyD',
       fire: 'Slash',
     },
     spawnPos: {

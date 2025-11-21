@@ -12,16 +12,29 @@ export function calculateBulletStartPosition({
   y: number
   direction: Direction
 }) {
-  if (direction === 'up') {
-    return { x: x + 6, y }
-  } else if (direction === 'down') {
-    return { x: x + 6, y: y + 13 }
-  } else if (direction === 'left') {
-    return { x, y: y + 6 }
-  } else if (direction === 'right') {
-    return { x: x + 13, y: y + 6 }
-  } else {
-    throw new Error(`Invalid direction ${direction}`)
+  const tankCenterX = x + TANK_SIZE / 2;
+  const tankCenterY = y + TANK_SIZE / 2;
+  const bulletOffset = TANK_SIZE / 2;
+  
+  switch (direction) {
+    case 'up':
+      return { x: tankCenterX, y: y };
+    case 'down':
+      return { x: tankCenterX, y: y + TANK_SIZE };
+    case 'left':
+      return { x: x, y: tankCenterY };
+    case 'right':
+      return { x: x + TANK_SIZE, y: tankCenterY };
+    case 'up-left':
+      return { x: x, y: y };
+    case 'up-right':
+      return { x: x + TANK_SIZE, y: y };
+    case 'down-left':
+      return { x: x, y: y + TANK_SIZE };
+    case 'down-right':
+      return { x: x + TANK_SIZE, y: y + TANK_SIZE };
+    default:
+      throw new Error(`Invalid direction ${direction}`);
   }
 }
 
@@ -107,7 +120,19 @@ export const or: UpdaterMaker = amount => x => x | amount
 export const add = (x: number, y: number) => x + y
 
 export function getDirectionInfo(direction: Direction, flipxy = false) {
-  let result: { xy: 'x' | 'y'; updater: UpdaterMaker }
+  // Handle six directions for hexagonal grid
+  if (direction === 'up-left') {
+    return { xy: 'x', updater: dec, secondaryXy: 'y', secondaryUpdater: dec };
+  } else if (direction === 'up-right') {
+    return { xy: 'x', updater: inc, secondaryXy: 'y', secondaryUpdater: dec };
+  } else if (direction === 'down-left') {
+    return { xy: 'x', updater: dec, secondaryXy: 'y', secondaryUpdater: inc };
+  } else if (direction === 'down-right') {
+    return { xy: 'x', updater: inc, secondaryXy: 'y', secondaryUpdater: inc };
+  }
+  
+  // Original four directions for backward compatibility
+  let result: { xy: 'x' | 'y'; updater: UpdaterMaker; secondaryXy?: 'x' | 'y'; secondaryUpdater?: UpdaterMaker }
   if (direction === 'up') {
     result = { xy: 'y', updater: dec }
   } else if (direction === 'down') {

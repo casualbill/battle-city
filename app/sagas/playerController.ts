@@ -47,6 +47,14 @@ export default function* playerController(tankId: TankId, config: PlayerConfig) 
       tryPush('up')
     } else if (code === config.control.down) {
       tryPush('down')
+    } else if (code === config.control.upLeft) {
+      tryPush('up-left')
+    } else if (code === config.control.upRight) {
+      tryPush('up-right')
+    } else if (code === config.control.downLeft) {
+      tryPush('down-left')
+    } else if (code === config.control.downRight) {
+      tryPush('down-right')
     }
   }
 
@@ -62,6 +70,14 @@ export default function* playerController(tankId: TankId, config: PlayerConfig) 
       pull(pressed, 'up')
     } else if (code === config.control.down) {
       pull(pressed, 'down')
+    } else if (code === config.control.upLeft) {
+      pull(pressed, 'up-left')
+    } else if (code === config.control.upRight) {
+      pull(pressed, 'up-right')
+    } else if (code === config.control.downLeft) {
+      pull(pressed, 'down-left')
+    } else if (code === config.control.downRight) {
+      pull(pressed, 'down-right')
     }
   }
 

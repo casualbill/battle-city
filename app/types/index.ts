@@ -33,6 +33,10 @@ export interface PlayerConfig {
     down: string
     left: string
     right: string
+    upLeft: string
+    upRight: string
+    downLeft: string
+    downRight: string
   }
   spawnPos: Point
 }
@@ -59,7 +63,7 @@ declare global {
   type TankLevel = 'basic' | 'fast' | 'power' | 'armor'
   type TankColor = 'green' | 'yellow' | 'silver' | 'red' | 'auto'
 
-  type Direction = 'up' | 'down' | 'left' | 'right'
+  type Direction = 'up' | 'down' | 'left' | 'right' | 'up-left' | 'up-right' | 'down-left' | 'down-right'
 
   type TankId = number
   type BulletId = number
