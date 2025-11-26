@@ -10,6 +10,7 @@ import { BLOCK_SIZE, PLAYER_CONFIGS } from '../utils/constants'
 import * as selectors from '../utils/selectors'
 import Timing from '../utils/Timing'
 import botMasterSaga from './botMasterSaga'
+import AIAssistantSaga from './AIAssistantSaga'
 import bulletsSaga from './bulletsSaga'
 import animateTexts from './common/animateTexts'
 import playerSaga from './playerSaga'
@@ -82,11 +83,19 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
   DEV.LOG && console.log('GAME STARTED')
 
   const players = [playerSaga('player-1', PLAYER_CONFIGS.player1)]
-  if (yield select(selectors.isInMultiPlayersMode)) {
+  const inAIAssistantMode = yield select(selectors.isInAIAssistantMode)
+  
+  if (yield select(selectors.isInMultiPlayersMode) || inAIAssistantMode) {
     players.push(playerSaga('player-2', PLAYER_CONFIGS.player2))
   }
+  
+  // If in AI assistant mode, start AI controller when player2 tank is activated
+  if (inAIAssistantMode) {
+    const activatePlayer2Action = yield take(A.ActivatePlayer, { playerName: 'player-2' })
+    players.push(AIAssistantSaga(activatePlayer2Action.tankId))
+  }
 
-  const result = yield race({
+  const result: any = yield race({
     tick: tickEmitter({ bindESC: true }),
     players: all(players),
     ai: botMasterSaga(),

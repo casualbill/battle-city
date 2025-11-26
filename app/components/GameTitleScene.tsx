@@ -14,10 +14,11 @@ import Screen from './Screen'
 import { Tank } from './tanks'
 import Text from './Text'
 import TextButton from './TextButton'
+import AIFirstUsePrompt from './AIFirstUsePrompt'
 
-type Choice = 'single-player' | 'multi-players' | 'stage-list' | 'gallery'
+type Choice = 'single-player' | 'multi-players' | 'ai-assistant' | 'stage-list' | 'gallery'
 
-const CHOICES: Choice[] = ['single-player', 'multi-players', 'stage-list', 'gallery']
+const CHOICES: Choice[] = ['single-player', 'multi-players', 'ai-assistant', 'stage-list', 'gallery']
 
 function nextChoice(choice: Choice): Choice {
   const index = CHOICES.indexOf(choice)
@@ -30,13 +31,13 @@ function prevChoice(choice: Choice): Choice {
 }
 
 export class GameTitleSceneContent extends React.PureComponent<
-  {
-    push(url: string): void
-  },
-  { choice: Choice }
+  { push(url: string): void },
+  { choice: Choice; loadingAIModel: boolean; showAIPrompt: boolean }
 > {
-  state = {
+  state: { choice: Choice; loadingAIModel: boolean; showAIPrompt: boolean } = {
     choice: 'single-player' as Choice,
+    loadingAIModel: false,
+    showAIPrompt: false,
   }
 
   componentDidMount() {
@@ -67,7 +68,9 @@ export class GameTitleSceneContent extends React.PureComponent<
       push('/choose')
     } else if (choice === 'multi-players') {
       push(`/choose?${MULTI_PLAYERS_SEARCH_KEY}`)
-    } else {
+    } else if (choice === 'ai-assistant') {
+    this.setState({ showAIPrompt: true })
+  } else {
       push('/gallery')
     }
   }
@@ -75,7 +78,35 @@ export class GameTitleSceneContent extends React.PureComponent<
   render() {
     const size = ITEM_SIZE_MAP.BRICK
     const scale = 4
-    const { choice } = this.state
+    const { choice, loadingAIModel, showAIPrompt } = this.state
+
+    if (loadingAIModel) {
+      return (
+        <g className="game-title-scene">
+          <rect fill="#000000" width={16 * B} height={15 * B} />
+          <Text content="LOADING AI MODEL..." x={3.5 * B} y={7 * B} fill="#ffffff" />
+          <rect x={3 * B} y={8 * B} width={10 * B} height={1.5 * B} fill="#333333" />
+          <rect x={3 * B} y={8 * B} width={5 * B} height={1.5 * B} fill="#96d332" />
+        </g>
+      )
+    }
+
+    if (showAIPrompt) {
+      return (
+        <g className="game-title-scene">
+          <rect fill="#000000" width={16 * B} height={15 * B} />
+          <AIFirstUsePrompt
+            onAccept={() => {
+              this.setState({ loadingAIModel: true })
+              // Placeholder for AI model loading simulation
+              setTimeout(() => push(`/choose?ai-assistant`), 1500)
+            }}
+            onDecline={() => this.setState({ showAIPrompt: false })}
+          />
+        </g>
+      )
+    }
+
     return (
       <g className="game-title-scene">
         <defs>
@@ -119,29 +150,37 @@ export class GameTitleSceneContent extends React.PureComponent<
           />
         </g>
         <TextButton
-          content="1 player"
-          x={5.5 * B}
-          y={8 * B}
-          textFill="white"
-          onMouseOver={() => this.setState({ choice: 'single-player' })}
-          onClick={() => this.onChoose('single-player')}
-        />
-        <TextButton
-          content="2 players"
-          x={5.5 * B}
-          y={9 * B}
-          textFill="white"
-          onMouseOver={() => this.setState({ choice: 'multi-players' })}
-          onClick={() => this.onChoose('multi-players')}
-        />
-        <TextButton
-          content="stage list"
-          x={5.5 * B}
-          y={10 * B}
-          textFill="white"
-          onMouseOver={() => this.setState({ choice: 'stage-list' })}
-          onClick={() => this.onChoose('stage-list')}
-        />
+            content="1 player"
+            x={5.5 * B}
+            y={8 * B}
+            textFill="white"
+            onMouseOver={() => this.setState({ choice: 'single-player' })}
+            onClick={() => this.onChoose('single-player')}
+          />
+          <TextButton
+            content="2 players"
+            x={5.5 * B}
+            y={9 * B}
+            textFill="white"
+            onMouseOver={() => this.setState({ choice: 'multi-players' })}
+            onClick={() => this.onChoose('multi-players')}
+          />
+          <TextButton
+            content="AI ASSISTANT"
+            x={5.5 * B}
+            y={10 * B}
+            textFill="white"
+            onMouseOver={() => this.setState({ choice: 'ai-assistant' })}
+            onClick={() => this.onChoose('ai-assistant')}
+          />
+          <TextButton
+            content="stage list"
+            x={5.5 * B}
+            y={11 * B}
+            textFill="white"
+            onMouseOver={() => this.setState({ choice: 'stage-list' })}
+            onClick={() => this.onChoose('stage-list')}
+          />
         <TextButton
           content="gallery"
           x={5.5 * B}
