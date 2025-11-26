@@ -98,6 +98,10 @@ export enum A {
   RemoveCustomStage = 'RemoveCustomStage',
   SetEditorContent = 'SetEditorContent',
   SyncCustomStages = 'SyncCustomStages',
+  // AI Assistant Actions
+  AILoadingProgress = 'AILoadingProgress',
+  AIEnemyKilled = 'AIEnemyKilled',
+  AIBaseProtected = 'AIBaseProtected',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
 }
@@ -681,6 +685,21 @@ export const syncCustomStages = () => ({ type: A.SyncCustomStages as A.SyncCusto
 export type LeaveGameScene = ReturnType<typeof leaveGameScene>
 export const leaveGameScene = () => ({ type: A.LeaveGameScene as A.LeaveGameScene })
 
+// AI Assistant Action Types
+export interface AILoadingProgressAction {
+  type: A.AILoadingProgress
+  progress: number
+}
+
+export interface AIEnemyKilledAction {
+  type: A.AIEnemyKilled
+  enemyId: number
+}
+
+export interface AIBaseProtectedAction {
+  type: A.AIBaseProtected
+}
+
 export type Action =
   | Move
   | StartMove
@@ -763,3 +782,6 @@ export type Action =
   | SyncCustomStages
   | LeaveGameScene
   | PlaySound
+  | AILoadingProgressAction
+  | AIEnemyKilledAction
+  | AIBaseProtectedAction
