@@ -15,7 +15,7 @@ import {
   ScoreRecord,
   StageConfig,
   TankRecord,
-  TextRecord,
+  TextRecord
 } from '../types'
 
 export enum A {
@@ -98,6 +98,8 @@ export enum A {
   RemoveCustomStage = 'RemoveCustomStage',
   SetEditorContent = 'SetEditorContent',
   SyncCustomStages = 'SyncCustomStages',
+  UnlockAchievement = 'UnlockAchievement',
+  UpdateAchievementStats = 'UpdateAchievementStats',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
 }
@@ -625,6 +627,22 @@ export function playSound(soundName: SoundName) {
   }
 }
 
+export type UnlockAchievement = ReturnType<typeof unlockAchievement>
+export function unlockAchievement(achievementId: string) {
+  return {
+    type: A.UnlockAchievement as A.UnlockAchievement,
+    achievementId,
+  }
+}
+
+export type UpdateAchievementStats = ReturnType<typeof updateAchievementStats>
+export function updateAchievementStats(stats: Record<string, any>) {
+  return {
+    type: A.UpdateAchievementStats as A.UpdateAchievementStats,
+    stats,
+  }
+}
+
 export type BeforeEndStage = ReturnType<typeof beforeEndStage>
 export const beforeEndStage = () => ({ type: A.BeforeEndStage as A.BeforeEndStage })
 
@@ -763,3 +781,5 @@ export type Action =
   | SyncCustomStages
   | LeaveGameScene
   | PlaySound
+  | UnlockAchievement
+  | UpdateAchievementStats

@@ -50,7 +50,7 @@ function* addBotHelper() {
   }
 }
 
-export default function* botMasterSaga() {
+export default function* botMasterSaga(): Generator<any, void, any> {
   const inMultiPlayersMode = yield select(selectors.isInMultiPlayersMode)
   const maxBotCount = inMultiPlayersMode ? 4 : 2
 

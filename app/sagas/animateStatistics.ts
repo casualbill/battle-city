@@ -6,7 +6,7 @@ import { TANK_LEVELS } from '../utils/constants'
 import * as selectors from '../utils/selectors'
 import Timing from '../utils/Timing'
 
-export default function* animateStatistics() {
+export default function* animateStatistics(): Generator<any, void, any> {
   yield put(actions.showStatistics())
 
   const state: State = yield select()

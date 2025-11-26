@@ -18,7 +18,7 @@ import stageSaga, { StageResult } from './stageSaga'
 import tickEmitter from './tickEmitter'
 
 // 播放游戏结束的动画
-function* animateGameover() {
+function* animateGameover(): Generator<any, void, any> {
   const textId1 = getNextId('text')
   const textId2 = getNextId('text')
   try {
@@ -51,7 +51,7 @@ function* animateGameover() {
   }
 }
 
-function* stageFlow(startStageIndex: number) {
+function* stageFlow(startStageIndex: number): Generator<any, void, any> {
   const { stages }: State = yield select()
   for (const stage of stages.slice(startStageIndex)) {
     const stageResult: StageResult = yield stageSaga(stage)
@@ -70,7 +70,7 @@ function* stageFlow(startStageIndex: number) {
  *  game-stage调用stage-saga来运行不同的关卡
  *  并根据stage-saga返回的结果选择继续下一个关卡, 或是选择游戏结束
  */
-export default function* gameSaga(action: actions.StartGame | actions.ResetGame) {
+export default function* gameSaga(action: actions.StartGame | actions.ResetGame): Generator<any, void, any> {
   if (action.type === A.ResetGame) {
     DEV.LOG && console.log('GAME RESET')
     return

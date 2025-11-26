@@ -10,6 +10,7 @@ import bullets, { BulletsMap } from './bullets'
 import explosions, { ExplosionsMap } from './explosions'
 import flickers, { FlickersMap } from './flickers'
 import game, { GameRecord } from './game'
+import achievements, { AchievementsRecord } from './achievements'
 import map from './map'
 import { player1, player2 } from './players'
 import powerUps, { PowerUpsMap } from './powerUps'
@@ -35,6 +36,7 @@ export interface State {
   stages: List<StageConfig>
   editorContent: StageConfig
   devOnly: any
+  achievements: AchievementsRecord
 }
 
 export function time(state = 0, action: Action) {
@@ -70,4 +72,5 @@ export default combineReducers<State>({
   stages,
   devOnly,
   editorContent,
+  achievements,
 })

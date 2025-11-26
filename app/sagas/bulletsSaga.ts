@@ -21,7 +21,7 @@ interface Stat {
   readonly bulletCollisionInfo: BulletCollisionInfo
 }
 
-function* handleTick() {
+function* handleTick(): Generator<any, void, any> {
   while (true) {
     const { delta }: actions.Tick = yield take(A.Tick)
     const { bullets }: State = yield select()
@@ -93,7 +93,7 @@ function handleBulletsCollidedWithBorder({ bulletCollisionInfo }: Stat, state: S
   })
 }
 
-function* destroySteels(collidedBullets: BulletsMap) {
+function* destroySteels(collidedBullets: BulletsMap): Generator<any, void, any> {
   const {
     map: { steels },
   }: State = yield select()
@@ -113,7 +113,7 @@ function* destroySteels(collidedBullets: BulletsMap) {
   }
 }
 
-function* destroyBricks(collidedBullets: BulletsMap) {
+function* destroyBricks(collidedBullets: BulletsMap): Generator<any, void, any> {
   const {
     map: { bricks },
   }: State = yield select()
@@ -133,7 +133,7 @@ function* destroyBricks(collidedBullets: BulletsMap) {
   }
 }
 
-function* destroyEagleIfNeeded(expBullets: BulletsMap) {
+function* destroyEagleIfNeeded(expBullets: BulletsMap): Generator<any, void, any> {
   const {
     map: { eagle },
   }: State = yield select()
@@ -224,7 +224,7 @@ function handleBulletsCollidedWithEagle({ bulletCollisionInfo }: Stat, state: St
   }
 }
 
-function* spawnHitActions({ tanks }: State, stat: Stat) {
+function* spawnHitActions({ tanks }: State, stat: Stat): Generator<any, void, any> {
   for (const [targetTankId, hitBullets] of stat.tankHitMap) {
     // 这里假设一帧内最多只有一发子弹同时击中一架坦克
     const bullet = hitBullets[0]
@@ -235,7 +235,7 @@ function* spawnHitActions({ tanks }: State, stat: Stat) {
   }
 }
 
-function* handleAfterTick() {
+function* handleAfterTick(): Generator<any, void, any> {
   while (true) {
     const { delta }: actions.AfterTick = yield take(A.AfterTick)
     const state: State = yield select()
@@ -277,11 +277,11 @@ function* handleAfterTick() {
   }
 }
 
-function* clearBullets() {
+function* clearBullets(): Generator<any, void, any> {
   yield put(actions.clearBullets())
 }
 
-export default function* bulletsSaga() {
+export default function* bulletsSaga(): Generator<any, void, any> {
   try {
     yield takeEvery(A.EndStage, clearBullets)
     yield all([handleTick(), handleAfterTick()])

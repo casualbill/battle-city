@@ -4,6 +4,7 @@ import { A } from '../utils/actions'
 import gameSaga from './gameSaga'
 import soundManager from './soundManager'
 import { syncFrom, syncTo } from './syncLocalStorage'
+import achievementsSaga from './achievementsSaga'
 
 export default function* rootSaga() {
   DEV.LOG && console.log('root saga started')
@@ -12,6 +13,7 @@ export default function* rootSaga() {
   yield fork(soundManager)
   yield takeEvery(A.SyncCustomStages, syncTo)
   yield takeLatest([A.StartGame, A.ResetGame], gameSaga)
+  yield fork(achievementsSaga)
 
   if (DEV.SKIP_CHOOSE_STAGE) {
     yield put(actions.startGame(0))
