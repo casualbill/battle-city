@@ -1,11 +1,14 @@
 import { Map } from 'immutable'
-import { TankRecord } from '../types'
-import { A, Action } from '../utils/actions'
+import TankRecord from '../types/TankRecord'
+import * as A from '../utils/actions'
 import { incTankLevel } from '../utils/common'
 
-export type TanksMap = Map<TankId, TankRecord>
+const initialState = Map<string, TankRecord>()
 
-export default function tanks(state = Map() as TanksMap, action: Action) {
+export default function tanks(
+  state: Map<string, TankRecord> = initialState,
+  action: A.Tick | A.AfterTick | A.AddBullet | A.BeforeRemoveBullet | A.RemoveBullet | A.RemoveSteels | A.RemoveBricks | A.UpdateMap | A.UpdateBullets | A.LoadStageMap | A.BeforeStartStage | A.BeforeEndStage | A.EndStage | A.BeforeEndGame | A.EndGame | A.StartGame | A.ResetGame | A.GamePause | A.GameResume | A.ShowHud | A.HideHud | A.UpdateTankEnergy
+): Map<string, TankRecord> {
   if (action.type === A.AddTank) {
     return state.set(action.tank.tankId, new TankRecord(action.tank))
   } else if (action.type === A.Hurt) {
@@ -56,6 +59,18 @@ export default function tanks(state = Map() as TanksMap, action: Action) {
   } else if (action.type === A.SetHelmetDuration) {
     return state.update(action.tankId, tank =>
       tank.set('helmetDuration', Math.max(0, action.duration)),
+    )
+  } else if (action.type === A.UpdateTankEnergy) {
+    const tank = state.get(action.tankId);
+    if (!tank) return state;
+    return state.update(action.tankId, tank =>
+      tank.merge({
+        energy: action.energy,
+        isOvercharging: action.isOvercharging,
+        overchargeTimeRemaining: action.overchargeTimeRemaining,
+        isOverchargeParalyzed: action.isOverchargeParalyzed,
+        overchargeParalysisTime: action.overchargeParalysisTime,
+      }),
     )
   } else {
     return state

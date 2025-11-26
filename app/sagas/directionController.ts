@@ -1,5 +1,5 @@
 import { put, select, take } from 'redux-saga/effects'
-import { Input, State, TankRecord } from '../types'
+import { Input, State, TankRecord, Action, Direction } from '../types'
 import * as actions from '../utils/actions'
 import { A } from '../utils/actions'
 import canTankMove from '../utils/canTankMove'
@@ -12,8 +12,8 @@ import values from '../utils/values'
 // 这样做是为了使坦克转向之后更容易的向前行驶, 因为障碍物(brick/steel/river)的坐标也总是4或8的倍数
 // 但是有的时候简单的使用 round8 来转换坐标, 可能使得坦克卡在障碍物中
 // 所以这里转向的时候, 需要同时尝试 floor8 和 ceil8 来转换坐标
-function* getReservedTank(tank: TankRecord) {
-  const { xy } = getDirectionInfo(tank.direction)
+function* getReservedTank(tank: TankRecord): Generator<any, TankRecord, any> {
+  const { xy } = getDirectionInfo(tank.direction as Direction)
   const coordinate = tank[xy]
   const useFloor = tank.set(xy, floor8(coordinate))
   const useCeil = tank.set(xy, ceil8(coordinate))
@@ -29,48 +29,71 @@ function* getReservedTank(tank: TankRecord) {
   }
 }
 
-export default function* directionController(
-  tankId: TankId,
-  getPlayerInput: (tank: TankRecord, delta: number) => Input,
-) {
+function calculateNextPosition(tank: TankRecord, direction: Direction, delta: number): { x: number; y: number } {
+  const speed = tank.speed || 5;
+  const { dx, dy } = getDirectionInfo(direction);
+  return {
+    x: tank.x + dx * speed * delta / 1000,
+    y: tank.y + dy * speed * delta / 1000,
+  };
+}
+
+export default function* directionController(tankId: TankId, shouldMove: () => Direction | null): Generator<any, void, any> {
   while (true) {
-    const { delta }: actions.Tick = yield take(A.Tick)
-    const tank = yield select((s: State) => s.tanks.get(tankId))
+    const { delta }: Action<typeof A.Tick> = yield take(A.Tick)
+    const tank: TankRecord | undefined = yield select((s: State) => s.tanks.get(tankId))
+if (!tank || !tank.alive || tank.isOverchargeParalyzed) continue
 
-    const input: Input = getPlayerInput(tank, delta)
 
-    if (input == null) {
-      if (tank.moving) {
-        yield put(actions.stopMove(tank.tankId))
-      }
-    } else if (input.type === 'turn') {
-      if (isPerpendicular(input.direction, tank.direction)) {
-        yield put(actions.move(tank.useReservedXY().set('direction', input.direction)))
-      } else {
-        yield put(actions.move(tank.set('direction', input.direction)))
-      }
-    } else if (input.type === 'forward') {
-      if (tank.frozenTimeout === 0) {
-        const speed = values.moveSpeed(tank)
-        const distance = Math.min(delta * speed, input.maxDistance || Infinity)
 
-        const { xy, updater } = getDirectionInfo(tank.direction)
-        const movedTank = tank.update(xy, updater(distance))
-        if (yield select(canTankMove, movedTank)) {
-          const reservedTank: TankRecord = yield getReservedTank(movedTank)
-          yield put(actions.move(movedTank.merge({ rx: reservedTank.x, ry: reservedTank.y })))
-          if (!tank.moving) {
-            yield put(actions.startMove(tank.tankId))
-          }
-        }
-      }
-    } else {
-      throw new Error(`Invalid input: ${input}`)
-    }
+    const direction = shouldMove()
+let nextEnergy = tank.energy
+let canMove = true
 
-    const nextFrozenTimeout = tank.frozenTimeout <= 0 ? 0 : tank.frozenTimeout - delta
-    if (tank.frozenTimeout !== nextFrozenTimeout) {
-      yield put(actions.setFrozenTimeout(tank.tankId, nextFrozenTimeout))
+// Handle energy management
+if (direction) {
+  // Consume energy when moving
+  nextEnergy = Math.max(0, tank.energy - tank.energyConsumptionRate * (delta / 1000))
+  if (nextEnergy === 0) canMove = false
+} else {
+  // Recover energy when idle
+  if (!tank.isOvercharging) {
+    nextEnergy = Math.min(100, tank.energy + tank.energyRecoveryRate * (delta / 1000))
+  }
+}
+
+// Update energy state
+if (tank.energy !== nextEnergy) {
+  yield put(actions.updateTankEnergy(tankId, nextEnergy, tank.isOvercharging, tank.overchargeTimeRemaining, tank.isOverchargeParalyzed, tank.overchargeParalysisTime))
+}
+
+if (!canMove) continue
+
+    const nextDirection = direction || tank.direction
+const nextPosition = calculateNextPosition(tank, nextDirection, delta)
+    const nextTank = tank.merge({ x: nextPosition.x, y: nextPosition.y, direction: nextDirection })
+    const canMoveToPosition = yield select(canTankMove, nextTank)
+
+if (canMoveToPosition) {
+  const updatedTank = tank.merge({ x: nextPosition.x, y: nextPosition.y, direction: nextDirection })
+  yield put({ type: A.MoveTank, tankId, x: updatedTank.x, y: updatedTank.y, direction: updatedTank.direction })
+} else if (direction) {
+  // Just change direction if can't move
+  yield put({ type: A.SetTankDirection, tankId, direction })
+}
+
+
+
+    // Update energy if it changed
+    if (tank.energy !== nextEnergy) {
+      yield put(actions.updateTankEnergy(
+        tankId,
+        nextEnergy,
+        tank.isOvercharging,
+        tank.overchargeTimeRemaining,
+        tank.isOverchargeParalyzed,
+        tank.overchargeParalysisTime
+      ))
     }
   }
 }

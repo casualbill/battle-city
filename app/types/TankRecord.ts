@@ -27,14 +27,48 @@ const TankRecordType = Record({
   cooldown: 0,
   // player tank被队友击中时无法移动，此时坦克会闪烁，该变量用来记录坦克是否可见
   visible: true,
+  // Energy shield fields
+  energy: 100,
+  energyRecoveryRate: 2,
+  energyConsumptionRate: 5,
+  overchargeChargeTime: 1000,
+  overchargeTimeRemaining: 0,
+  isOvercharging: false,
+  isOvercharged: false,
+  isOverchargeParalyzed: false,
+  overchargeParalysisTime: 1000,
 })
 
-export default class TankRecord extends TankRecordType {
+export default class TankRecord extends Record({
+  tankId: '',
+  x: 0,
+  y: 0,
+  rx: 0,
+  ry: 0,
+  direction: 0,
+  energy: 100,
+  energyRecoveryRate: 2,
+  energyConsumptionRate: 5,
+  overchargeChargeTime: 1000,
+  overchargeTimeRemaining: 0,
+  isOvercharging: false,
+  isOvercharged: false,
+  isOverchargeParalyzed: false,
+  overchargeParalysisTime: 1000,
+  alive: true,
+  side: 'player',
+  cooldown: 0,
+  speed: 5,
+}) {
   static fromJS(object: any) {
     return new TankRecord(object)
   }
 
   useReservedXY() {
     return this.merge({ x: this.rx, y: this.ry })
+  }
+
+  public merge(partial: Partial<TankRecord>): TankRecord {
+    return super.merge(partial) as TankRecord;
   }
 }
