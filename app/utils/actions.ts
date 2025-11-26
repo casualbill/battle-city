@@ -100,6 +100,7 @@ export enum A {
   SyncCustomStages = 'SyncCustomStages',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
+  UpdateTankEnergy = 'UpdateTankEnergy',
 }
 
 export type Move = ReturnType<typeof move>
@@ -551,6 +552,26 @@ export function setTankVisibility(tankId: TankId, visible: boolean) {
     type: A.SetTankVisibility as A.SetTankVisibility,
     tankId,
     visible,
+  }
+}
+
+export type UpdateTankEnergy = ReturnType<typeof updateTankEnergy>
+export function updateTankEnergy(
+  tankId: TankId,
+  energy: number,
+  isOvercharging: boolean,
+  overchargeTimeRemaining: number,
+  isOverchargeParalyzed: boolean,
+  overchargeParalysisTime: number,
+) {
+  return {
+    type: A.UpdateTankEnergy as A.UpdateTankEnergy,
+    tankId,
+    energy,
+    isOvercharging,
+    overchargeTimeRemaining,
+    isOverchargeParalyzed,
+    overchargeParalysisTime,
   }
 }
 
