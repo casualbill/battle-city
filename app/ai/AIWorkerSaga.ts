@@ -30,7 +30,7 @@ function getRandomPassableSpot(posInfoArray: Spot[]) {
   }
 }
 
-function* wanderMode(ctx: Bot) {
+function* wanderMode(ctx: Bot): Generator<any, void, any> {
   DEV.LOG_AI && logAI('enter wander-mode')
   const simpleFireLoopTask: Task = yield fork(simpleFireLoop, ctx)
   const tank: TankRecord = yield select(selectors.tank, ctx.tankId)
@@ -46,7 +46,7 @@ function* wanderMode(ctx: Bot) {
   simpleFireLoopTask.cancel()
 }
 
-function* attackEagleMode(ctx: Bot) {
+function* attackEagleMode(ctx: Bot): Generator<any, void, any> {
   DEV.LOG_AI && logAI('enter attack-eagle-mode')
   const simpleFireLoopTask: Task = yield fork(simpleFireLoop, ctx)
   const { map }: State = yield select()
@@ -70,7 +70,7 @@ function* attackEagleMode(ctx: Bot) {
   }
 }
 
-function* attackEagle(ctx: Bot, fireEstimate: FireEstimate) {
+function* attackEagle(ctx: Bot, fireEstimate: FireEstimate): Generator<any, void, any> {
   DEV.LOG_AI && logAI('start attack eagle')
   const { map, tanks }: State = yield select()
   const tank: TankRecord = yield select(selectors.tank, ctx.tankId)
@@ -92,7 +92,7 @@ function* attackEagle(ctx: Bot, fireEstimate: FireEstimate) {
 }
 
 // TODO WIP
-function* dangerDetectionLoop(ctx: Bot) {
+function* dangerDetectionLoop(ctx: Bot): Generator<any, void, any> {
   while (true) {
     const tank: TankRecord = yield select(selectors.tank, ctx.tankId)
     DEV.ASSERT && console.assert(tank != null)
@@ -126,7 +126,7 @@ function* dangerDetectionLoop(ctx: Bot) {
   }
 }
 
-function* blocked(ctx: Bot) {
+function* blocked(ctx: Bot): Generator<any, void, any> {
   let acc = 0
   let lastTank = yield select(selectors.tank, ctx.tankId)
   while (acc < BLOCK_TIMEOUT) {
@@ -155,7 +155,7 @@ function* blocked(ctx: Bot) {
  * 并将创建noteChannel和commandChannel
  * 游戏逻辑和AI逻辑使用这两个channel来进行数据交换
  */
-export default function* AIWorkerSaga(ctx: Bot) {
+export default function* AIWorkerSaga(ctx: Bot): Generator<any, void, any> {
   yield fork(dangerDetectionLoop, ctx)
 
   let continuousWanderCount = 0
@@ -163,7 +163,7 @@ export default function* AIWorkerSaga(ctx: Bot) {
     yield race<any>([blocked(ctx), mode()])
   }
 
-  function* mode() {
+  function* mode(): Generator<any, void, any> {
     if (Math.random() < 0.9 - continuousWanderCount * 0.02) {
       continuousWanderCount++
       yield wanderMode(ctx)

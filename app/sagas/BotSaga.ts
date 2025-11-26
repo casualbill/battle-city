@@ -10,7 +10,7 @@ import { explosionFromTank, scoreFromKillTank } from './common/destroyTanks'
 import directionController from './directionController'
 import fireController from './fireController'
 
-export default function* botSaga(tankId: TankId) {
+export default function* botSaga(tankId: TankId): Generator<any, void, any> {
   const ctx = new Bot(tankId)
   try {
     yield takeEvery(hitPredicate, hitHandler)

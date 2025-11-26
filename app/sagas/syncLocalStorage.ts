@@ -1,7 +1,8 @@
-import { List } from 'immutable'
+import { List, Map } from 'immutable'
 import { put, select } from 'redux-saga/effects'
 import { State } from '../reducers'
 import { default as StageConfig, RawStageConfig, StageConfigConverter } from '../types/StageConfig'
+import { Achievement } from '../reducers/achievements'
 import * as actions from '../utils/actions'
 
 function getStageNameList(stageList: List<StageConfig | RawStageConfig>) {
@@ -12,33 +13,59 @@ function getStageNameList(stageList: List<StageConfig | RawStageConfig>) {
   }
 }
 
-const key = 'custom-stages'
+const stagesKey = 'custom-stages'
+const achievementsKey = 'achievements'
 
 /** 将自定义关卡保存到 localStorage 中 */
 export function* syncTo() {
   DEV.LOG && console.log('Sync custom stages to localStorage')
-  const { stages }: State = yield select()
+  const { stages, achievements }: State = yield select()
+  
+  // Sync custom stages
   const customStages = stages.filter(s => s.custom)
   if (customStages.isEmpty()) {
-    localStorage.removeItem(key)
+    localStorage.removeItem(stagesKey)
   } else {
     const stageList = customStages.map(StageConfigConverter.s2r)
     DEV.LOG && console.log('Saved stages:', getStageNameList(stageList))
     const content = JSON.stringify(stageList)
-    localStorage.setItem(key, content)
+    localStorage.setItem(stagesKey, content)
   }
+  
+  // Sync achievements
+  const achievementsData = achievements.achievements.toJSON()
+  DEV.LOG && console.log('Saved achievements:', JSON.stringify(achievementsData))
+  localStorage.setItem(achievementsKey, JSON.stringify(achievementsData))
 }
 
 /** 从 localStorage 中读取自定义关卡信息 */
 export function* syncFrom() {
   try {
     DEV.LOG && console.log('Sync custom stages from localStorage')
-    const content = localStorage.getItem(key)
-    const stageList = List(JSON.parse(content)).map(StageConfigConverter.r2s)
-    DEV.LOG && console.log('Loaded stages:', getStageNameList(stageList))
-    yield* stageList.map(stage => put(actions.setCustomStage(stage)))
+    // Load custom stages
+    const stagesContent = localStorage.getItem(stagesKey)
+    if (stagesContent) {
+      const stageList = List(JSON.parse(stagesContent)).map(StageConfigConverter.r2s)
+      DEV.LOG && console.log('Loaded stages:', getStageNameList(stageList))
+      yield* stageList.map(stage => put(actions.setCustomStage(stage)))
+    }
+    
+    // Load achievements
+    DEV.LOG && console.log('Sync achievements from localStorage')
+    const achievementsContent = localStorage.getItem(achievementsKey)
+    if (achievementsContent) {
+      const achievementsData = JSON.parse(achievementsContent)
+      DEV.LOG && console.log('Loaded achievements:', JSON.stringify(achievementsData))
+      // For each achievement, if it's unlocked, dispatch an unlock action
+      for (const achievementId in achievementsData) {
+        if (achievementsData[achievementId].unlocked) {
+          yield put(actions.unlockAchievement(achievementId))
+        }
+      }
+    }
   } catch (e) {
     console.error(e)
-    localStorage.removeItem(key)
+    localStorage.removeItem(stagesKey)
+    localStorage.removeItem(achievementsKey)
   }
 }

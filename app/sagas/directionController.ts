@@ -12,7 +12,7 @@ import values from '../utils/values'
 // 这样做是为了使坦克转向之后更容易的向前行驶, 因为障碍物(brick/steel/river)的坐标也总是4或8的倍数
 // 但是有的时候简单的使用 round8 来转换坐标, 可能使得坦克卡在障碍物中
 // 所以这里转向的时候, 需要同时尝试 floor8 和 ceil8 来转换坐标
-function* getReservedTank(tank: TankRecord) {
+function* getReservedTank(tank: TankRecord): Generator<any, TankRecord, any> {
   const { xy } = getDirectionInfo(tank.direction)
   const coordinate = tank[xy]
   const useFloor = tank.set(xy, floor8(coordinate))
@@ -20,7 +20,7 @@ function* getReservedTank(tank: TankRecord) {
   const canMoveWhenUseFloor = yield select(canTankMove, useFloor)
   const canMoveWhenUseCeil = yield select(canTankMove, useCeil)
 
-  if (!canMoveWhenUseFloor) {
+  if (!canMoveWhenUseFloorGenerator<any, never, any> {
     return useCeil
   } else if (!canMoveWhenUseCeil) {
     return useFloor
@@ -32,7 +32,7 @@ function* getReservedTank(tank: TankRecord) {
 export default function* directionController(
   tankId: TankId,
   getPlayerInput: (tank: TankRecord, delta: number) => Input,
-) {
+): Generator<any, never, any> {
   while (true) {
     const { delta }: actions.Tick = yield take(A.Tick)
     const tank = yield select((s: State) => s.tanks.get(tankId))

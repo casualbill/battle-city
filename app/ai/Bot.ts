@@ -26,7 +26,7 @@ export default class Bot {
     this._fire = true
   }
 
-  *forward(forwardLength: number) {
+  *forward(forwardLength: number): Generator<any, void, any> {
     DEV.LOG_AI && logAI('forward', forwardLength)
     const tank = yield select(selectors.tank, this.tankId)
     DEV.ASSERT && console.assert(tank != null)
@@ -35,7 +35,7 @@ export default class Bot {
     this.forwardLength = forwardLength
   }
 
-  *moveTo(t: number) {
+  *moveTo(t: number): Generator<any, void, any> {
     const tank = yield select(selectors.tank, this.tankId)
     DEV.ASSERT && console.assert(tank != null)
     const target = {
