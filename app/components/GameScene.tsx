@@ -7,7 +7,7 @@ import { GameRecord } from '../reducers/game'
 import { State } from '../types'
 import StageConfig from '../types/StageConfig'
 import * as actions from '../utils/actions'
-import BattleFieldScene from './BattleFieldScene'
+import BattleField3D from './BattleField3D'
 import StatisticsScene from './StatisticsScene'
 
 export interface GameSceneProps {
@@ -53,17 +53,17 @@ class GameScene extends React.PureComponent<GameSceneProps> {
   }
 
   render() {
-    const { game } = this.props
+    const { game, tanks } = this.props
     if (game.status === 'stat') {
       return <StatisticsScene />
     } else {
-      return <BattleFieldScene />
+      return <BattleField3D tanks={tanks} />
     }
   }
 }
 
 function mapStateToProps(state: State) {
-  return { game: state.game, stages: state.stages }
+  return { game: state.game, stages: state.stages, tanks: state.tanks }
 }
 
 export default connect(mapStateToProps)(GameScene) as any
