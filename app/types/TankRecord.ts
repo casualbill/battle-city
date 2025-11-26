@@ -1,4 +1,5 @@
 import { Record } from 'immutable'
+import { Side, Direction, TankLevel, TankColor } from './index'
 
 const TankRecordType = Record({
   /** 坦克是否存活在战场上，因为坦克被击毁之后，坦克的子弹可能还处于飞行状态

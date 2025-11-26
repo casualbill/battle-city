@@ -56,31 +56,31 @@ declare global {
 
   type PowerUpName = 'tank' | 'star' | 'grenade' | 'timer' | 'helmet' | 'shovel'
 
-  type TankLevel = 'basic' | 'fast' | 'power' | 'armor'
-  type TankColor = 'green' | 'yellow' | 'silver' | 'red' | 'auto'
+  export type TankLevel = 'basic' | 'fast' | 'power' | 'armor'
+  export type TankColor = 'green' | 'yellow' | 'silver' | 'red' | 'auto'
 
-  type Direction = 'up' | 'down' | 'left' | 'right'
+  export type Direction = 'up' | 'down' | 'left' | 'right'
 
-  type TankId = number
-  type BulletId = number
-  type PowerUpId = number
-  type ScoreId = number
-  type AreaId = number
+  export type TankId = number
+  export type BulletId = number
+  export type PowerUpId = number
+  export type ScoreId = number
+  export type AreaId = number
 
-  type PlayerName = 'player-1' | 'player-2'
-  type BotName = string
-  type TextId = number
-  type FlickerId = number
-  type ExplosionId = number
+  export type PlayerName = 'player-1' | 'player-2'
+  export type BotName = string
+  export type TextId = number
+  export type FlickerId = number
+  export type ExplosionId = number
 
-  type ExplosionShape = 's0' | 's1' | 's2' | 'b0' | 'b1'
-  type FlickerShape = 0 | 1 | 2 | 3
+  export type ExplosionShape = 's0' | 's1' | 's2' | 'b0' | 'b1'
+  export type FlickerShape = 0 | 1 | 2 | 3
 
-  type SteelIndex = number
-  type BrickIndex = number
-  type RiverIndex = number
+  export type SteelIndex = number
+  export type BrickIndex = number
+  export type RiverIndex = number
 
-  type Side = 'player' | 'bot'
+  export type Side = 'player' | 'bot'
 
   /** Note 包含了一些游戏逻辑向AI逻辑发送的消息/通知 */
   type Note = Note.Note
