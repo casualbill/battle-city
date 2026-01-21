@@ -55,6 +55,19 @@ const GameRecordBase = Record(
 
     /** stage-enter-curtain相关字段 */
     stageEnterCurtainT: 0,
+    
+    /** 是否启用随机事件 */
+    randomEventEnabled: false,
+    /** 当前随机事件类型 */
+    currentRandomEvent: null as 'tide' | 'blizzard' | 'bombing' | null,
+    /** 潮汐事件进度 (0-1) */
+    tideProgress: 0,
+    /** 潮汐事件方向 ('in' 进入, 'out' 退出) */
+    tideDirection: 'in' as 'in' | 'out',
+    /** 是否正在进行暴雪事件 */
+    blizzardActive: false,
+    /** 轰炸目标列表 */
+    bombingTargets: Map<string, { x: number; y: number }>(),
   },
   'GameRecord',
 )
@@ -119,6 +132,26 @@ export default function game(state = new GameRecord(), action: Action) {
     )
   } else if (action.type === A.SetIsSpawningBotTank) {
     return state.set('isSpawningBotTank', action.isSpawning)
+  } else if (action.type === A.ToggleRandomEvent) {
+    return state.set('randomEventEnabled', !state.randomEventEnabled)
+  } else if (action.type === A.SetRandomEvent) {
+    return state.set('currentRandomEvent', action.eventType)
+  } else if (action.type === A.UpdateTideProgress) {
+    return state
+      .set('tideProgress', action.progress)
+      .set('tideDirection', action.direction)
+  } else if (action.type === A.SetBlizzardActive) {
+    return state.set('blizzardActive', action.active)
+  } else if (action.type === A.AddBombingTarget) {
+    return state.update('bombingTargets', targets =>
+      targets.set(action.id, { x: action.x, y: action.y })
+    )
+  } else if (action.type === A.RemoveBombingTarget) {
+    return state.update('bombingTargets', targets => targets.delete(action.id))
+  } else if (action.type === A.ExplodeBombingTarget) {
+    return state.update('bombingTargets', targets => targets.delete(action.id))
+  } else if (action.type === A.ClearBombingTargets) {
+    return state.set('bombingTargets', Map())
   } else {
     return state
   }

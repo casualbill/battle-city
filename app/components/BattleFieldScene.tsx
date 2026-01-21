@@ -5,6 +5,7 @@ import { State } from '../reducers'
 import { BLOCK_SIZE as B } from '../utils/constants'
 import BrickLayer from './BrickLayer'
 import Bullet from './Bullet'
+import BombingTarget from './BombingTarget'
 import CurtainsContainer from './CurtainsContainer'
 import RestrictedAreaLayer from './dev-only/RestrictedAreaLayer'
 import SpotGraph from './dev-only/SpotGraph'
@@ -27,12 +28,56 @@ import TextLayer from './TextLayer'
 
 export class BattleFieldContent extends React.PureComponent<Partial<State & Point>> {
   render() {
-    const { x = 0, y = 0, bullets, map, explosions, flickers, tanks, powerUps, scores } = this.props
+    const { x = 0, y = 0, bullets, map, explosions, flickers, tanks, powerUps, scores, game } = this.props
     const { bricks, steels, rivers, snows, forests, eagle, restrictedAreas } = map.toObject()
     const aliveTanks = tanks.filter(t => t.alive)
+    const { currentRandomEvent, tideProgress, blizzardActive, bombingTargets } = game
     return (
       <g className="battle-field" transform={`translate(${x},${y})`}>
         <rect width={13 * B} height={13 * B} fill="#000000" />
+        
+        {/* 潮汐效果 */}
+        {currentRandomEvent === 'tide' && tideProgress > 0 && (
+          <g className="tide-layer">
+            {/* 上边潮汐 */}
+            <rect 
+              x={0} 
+              y={0} 
+              width={13 * B} 
+              height={13 * B * tideProgress} 
+              fill="lightblue" 
+              opacity={0.5} 
+            />
+            {/* 下边潮汐 */}
+            <rect 
+              x={0} 
+              y={13 * B - 13 * B * tideProgress} 
+              width={13 * B} 
+              height={13 * B * tideProgress} 
+              fill="lightblue" 
+              opacity={0.5} 
+            />
+            {/* 左边潮汐 */}
+            <rect 
+              x={0} 
+              y={0} 
+              width={13 * B * tideProgress} 
+              height={13 * B} 
+              fill="lightblue" 
+              opacity={0.5} 
+            />
+            {/* 右边潮汐 */}
+            <rect 
+              x={13 * B - 13 * B * tideProgress} 
+              y={0} 
+              width={13 * B * tideProgress} 
+              height={13 * B} 
+              fill="lightblue" 
+              opacity={0.5} 
+            />
+          </g>
+        )}
+        
         <RiverLayer rivers={rivers} />
         <SteelLayer steels={steels} />
         <BrickLayer bricks={bricks} />
@@ -59,6 +104,24 @@ export class BattleFieldContent extends React.PureComponent<Partial<State & Poin
         {/* 因为坦克/子弹可以"穿过"森林, 所以 <ForestLayer /> 需要放在 tank-layer 和 bullet-layer 的后面 */}
         <ForestLayer forests={forests} />
         <RestrictedAreaLayer areas={restrictedAreas} />
+        
+        {/* 轰炸目标 */}
+        <g className="bombing-targets-layer">
+          {bombingTargets && bombingTargets.map((target, id) => (
+            <BombingTarget key={id} x={target.x} y={target.y} />
+          )).valueSeq()}
+        </g>
+        
+        {/* 暴雪效果 - 雪花 */}
+        {currentRandomEvent === 'blizzard' && blizzardActive && (
+          <g className="blizzard-layer">
+            {Array.from({ length: 50 }).map((_, i) => (
+              <g key={i} transform={`translate(${Math.random() * 13 * B}, ${Math.random() * 13 * B})`}>
+                <circle cx="0" cy="0" r="2" fill="white" opacity="0.7" />
+              </g>
+            ))}
+          </g>
+        )}
         <g className="power-up-layer">
           {powerUps
             .map(powerUp => <PowerUp key={powerUp.powerUpId} powerUp={powerUp} />)
