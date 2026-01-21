@@ -110,4 +110,53 @@ declare global {
     | 'powerup_appear'
     | 'powerup_pick'
     | 'statistics_1'
+
+  /** 随机事件类型 */
+  type RandomEventType = 'tide' | 'blizzard' | 'bombing'
+
+  /** 潮汐事件状态 */
+  interface TideEvent {
+    type: 'tide'
+    phase: 'entering' | 'staying' | 'exiting'
+    progress: number // 0-1，代表事件进行的进度
+    direction: 'up' | 'down' | 'left' | 'right'
+  }
+
+  /** 暴雪事件状态 */
+  interface BlizzardEvent {
+    type: 'blizzard'
+    active: boolean
+    snowflakes: Array<{
+      id: number
+      x: number
+      y: number
+      size: number
+      speedX: number
+      speedY: number
+      rotation: number
+    }>
+  }
+
+  /** 轰炸事件状态 */
+  interface BombingEvent {
+    type: 'bombing'
+    circles: Array<{
+      id: number
+      x: number
+      y: number
+      radius: number
+      timer: number // 爆炸倒计时
+      exploded: boolean
+    }>
+    nextBombTimer: number // 下次轰炸的倒计时
+  }
+
+  /** 随机事件状态 */
+  type RandomEvent = TideEvent | BlizzardEvent | BombingEvent
+
+  /** 随机事件配置 */
+  interface RandomEventConfig {
+    enabled: boolean
+    currentEvent: RandomEvent | null
+  }
 }

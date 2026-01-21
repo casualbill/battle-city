@@ -99,8 +99,55 @@ export default function canTankMove(state: State, tank: TankRecord, threshhold =
   const {
     tanks,
     map: { bricks, steels, rivers, eagle, restrictedAreas },
+    game: { currentRandomEvent },
   } = state
   const tankRect = asRect(tank)
+  
+  // 检查潮汐事件，如果坦克在潮汐区域则不能移动
+  if (currentRandomEvent && currentRandomEvent.type === 'tide') {
+    const { phase, progress, direction } = currentRandomEvent
+    const fieldWidth = 13 * BLOCK_SIZE
+    const fieldHeight = 13 * BLOCK_SIZE
+    
+    // 计算潮汐区域的范围
+    let tideArea: Rect
+    
+    switch (direction) {
+      case 'up':
+        const height = (phase === 'entering' || phase === 'exiting') ? progress * 0.4 : 0.4
+        tideArea = { x: 0, y: 0, width: fieldWidth, height: height * fieldHeight }
+        if (phase === 'exiting') {
+          tideArea.y = (1 - progress) * fieldHeight * 0.4
+        }
+        break
+      case 'down':
+        const downHeight = (phase === 'entering' || phase === 'exiting') ? progress * 0.4 : 0.4
+        tideArea = { x: 0, y: (1 - downHeight) * fieldHeight, width: fieldWidth, height: downHeight * fieldHeight }
+        if (phase === 'exiting') {
+          tideArea.y = (1 - downHeight) * fieldHeight
+        }
+        break
+      case 'left':
+        const width = (phase === 'entering' || phase === 'exiting') ? progress * 0.4 : 0.4
+        tideArea = { x: 0, y: 0, width: width * fieldWidth, height: fieldHeight }
+        if (phase === 'exiting') {
+          tideArea.x = (1 - progress) * fieldWidth * 0.4
+        }
+        break
+      case 'right':
+        const rightWidth = (phase === 'entering' || phase === 'exiting') ? progress * 0.4 : 0.4
+        tideArea = { x: (1 - rightWidth) * fieldWidth, y: 0, width: rightWidth * fieldWidth, height: fieldHeight }
+        if (phase === 'exiting') {
+          tideArea.x = (1 - rightWidth) * fieldWidth
+        }
+        break
+    }
+    
+    // 检查坦克是否在潮汐区域内
+    if (testCollide(tankRect, tideArea, -0.01)) {
+      return false
+    }
+  }
 
   // 判断是否位于战场内
   if (!isInField(tankRect)) {

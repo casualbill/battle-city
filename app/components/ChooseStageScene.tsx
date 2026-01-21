@@ -10,12 +10,14 @@ import Screen from './Screen'
 import StagePreview from './StagePreview'
 import Text from './Text'
 import TextButton from './TextButton'
+import { toggleRandomEvent } from '../utils/actions'
 
 class ChooseStageScene extends React.PureComponent<{
   stages: List<StageConfig>
   dispatch: Dispatch
   location: Location
   match: match<{ stageName: string }>
+  randomEventEnabled: boolean
 }> {
   componentDidMount() {
     document.addEventListener('keydown', this.onKeyDown)
@@ -71,6 +73,10 @@ class ChooseStageScene extends React.PureComponent<{
     dispatch(push(`/stage/${stageName}${location.search}`))
   }
 
+  onToggleRandomEvent = () => {
+    this.props.dispatch(toggleRandomEvent())
+  }
+
   render() {
     const { match, dispatch, stages } = this.props
     const stageNames = stages.map(s => s.name)
@@ -122,6 +128,18 @@ class ChooseStageScene extends React.PureComponent<{
           <TextButton content="play" stroke="#96d332" x={6 * B} y={0} onClick={this.onStartPlay} />
           <TextButton content="back" x={9 * B} y={0} onClick={() => dispatch(replace('/'))} />
         </g>
+        <g className="random-event-toggle" transform={`translate(${2.5 * B}, ${14 * B})`}>
+          <Text content="RANDOM EVENT" x={0} y={0} />
+          <TextButton
+            content={this.props.randomEventEnabled ? "ON" : "OFF"}
+            x={8 * B}
+            y={0}
+            onClick={this.onToggleRandomEvent}
+            selected={this.props.randomEventEnabled}
+            textFill={this.props.randomEventEnabled ? "#96d332" : "#ccc"}
+            selectedTextFill="#333"
+          />
+        </g>
         <g className="hint" transform={`translate(${0.5 * B},${14.5 * B}) scale(0.5)`}>
           <Text fill="#999" content="Press left or right to choose stages. Press fire to start." />
         </g>
@@ -130,6 +148,6 @@ class ChooseStageScene extends React.PureComponent<{
   }
 }
 
-const mapStateToProps = (state: State) => ({ stages: state.stages })
+const mapStateToProps = (state: State) => ({ stages: state.stages, randomEventEnabled: state.game.randomEventEnabled })
 
 export default connect(mapStateToProps)(ChooseStageScene)
