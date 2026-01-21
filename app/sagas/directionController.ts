@@ -1,5 +1,5 @@
-import { put, select, take } from 'redux-saga/effects'
-import { Input, State, TankRecord } from '../types'
+import { delay, put, select, take } from 'redux-saga/effects'
+import { Input, State, TankRecord, TankId } from '../types'
 import * as actions from '../utils/actions'
 import { A } from '../utils/actions'
 import canTankMove from '../utils/canTankMove'
@@ -39,19 +39,57 @@ export default function* directionController(
 
     const input: Input = getPlayerInput(tank, delta)
 
+    // 获取当前随机事件
+    const currentRandomEvent = yield select((s: State) => s.game.currentRandomEvent)
+    const isBlizzardActive = currentRandomEvent && currentRandomEvent.type === 'blizzard'
+    
     if (input == null) {
       if (tank.moving) {
+        // 暴雪事件下，停止前需要滑动1个坦克长度
+        if (isBlizzardActive) {
+          // 计算滑动距离（1个BLOCK_SIZE）
+          const slideDistance = values.BLOCK_SIZE
+          const { xy, updater } = getDirectionInfo(tank.direction)
+          const slidTank = tank.update(xy, updater(slideDistance))
+          
+          // 检查是否可以滑动
+          if (yield select(canTankMove, slidTank)) {
+            yield put(actions.move(slidTank))
+            // 短暂延迟后再停止
+            yield delay(100)
+          }
+        }
         yield put(actions.stopMove(tank.tankId))
       }
     } else if (input.type === 'turn') {
       if (isPerpendicular(input.direction, tank.direction)) {
+        // 暴雪事件下，转向前需要滑动1个坦克长度
+        if (isBlizzardActive) {
+          // 计算滑动距离（1个BLOCK_SIZE）
+          const slideDistance = values.BLOCK_SIZE
+          const { xy, updater } = getDirectionInfo(tank.direction)
+          const slidTank = tank.update(xy, updater(slideDistance))
+          
+          // 检查是否可以滑动
+          if (yield select(canTankMove, slidTank)) {
+            yield put(actions.move(slidTank))
+            // 短暂延迟后再转向
+            yield delay(100)
+          }
+        }
         yield put(actions.move(tank.useReservedXY().set('direction', input.direction)))
       } else {
         yield put(actions.move(tank.set('direction', input.direction)))
       }
     } else if (input.type === 'forward') {
       if (tank.frozenTimeout === 0) {
-        const speed = values.moveSpeed(tank)
+        // 获取当前随机事件
+        const currentRandomEvent = yield select((s: State) => s.game.currentRandomEvent)
+        // 如果是暴雪事件，速度降低80%
+        let speed = values.moveSpeed(tank)
+        if (currentRandomEvent && currentRandomEvent.type === 'blizzard') {
+          speed *= 0.8
+        }
         const distance = Math.min(delta * speed, input.maxDistance || Infinity)
 
         const { xy, updater } = getDirectionInfo(tank.direction)

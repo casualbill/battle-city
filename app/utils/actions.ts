@@ -100,6 +100,15 @@ export enum A {
   SyncCustomStages = 'SyncCustomStages',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
+  
+  // 随机事件相关
+  ToggleRandomEvent = 'ToggleRandomEvent',
+  SetRandomEvent = 'SetRandomEvent',
+  UpdateRandomEvent = 'UpdateRandomEvent',
+  ClearRandomEvent = 'ClearRandomEvent',
+  AddBombingCircle = 'AddBombingCircle',
+  UpdateBombingCircle = 'UpdateBombingCircle',
+  RemoveBombingCircle = 'RemoveBombingCircle',
 }
 
 export type Move = ReturnType<typeof move>
@@ -681,6 +690,51 @@ export const syncCustomStages = () => ({ type: A.SyncCustomStages as A.SyncCusto
 export type LeaveGameScene = ReturnType<typeof leaveGameScene>
 export const leaveGameScene = () => ({ type: A.LeaveGameScene as A.LeaveGameScene })
 
+// 随机事件相关的 action creators
+export type ToggleRandomEvent = ReturnType<typeof toggleRandomEvent>
+export function toggleRandomEvent() {
+  return { type: A.ToggleRandomEvent as A.ToggleRandomEvent }
+}
+
+export type SetRandomEvent = ReturnType<typeof setRandomEvent>
+export function setRandomEvent(event: RandomEvent) {
+  return { type: A.SetRandomEvent as A.SetRandomEvent, event }
+}
+
+export type UpdateRandomEvent = ReturnType<typeof updateRandomEvent>
+export function updateRandomEvent(event: Partial<RandomEvent>) {
+  return { type: A.UpdateRandomEvent as A.UpdateRandomEvent, event }
+}
+
+export type ClearRandomEvent = ReturnType<typeof clearRandomEvent>
+export function clearRandomEvent() {
+  return { type: A.ClearRandomEvent as A.ClearRandomEvent }
+}
+
+export type AddBombingCircle = ReturnType<typeof addBombingCircle>
+export function addBombingCircle(circle: {
+  id: number
+  x: number
+  y: number
+  radius: number
+  timer: number
+}) {
+  return { type: A.AddBombingCircle as A.AddBombingCircle, circle }
+}
+
+export type UpdateBombingCircle = ReturnType<typeof updateBombingCircle>
+export function updateBombingCircle(id: number, updates: Partial<{
+  timer: number
+  exploded: boolean
+}>) {
+  return { type: A.UpdateBombingCircle as A.UpdateBombingCircle, id, updates }
+}
+
+export type RemoveBombingCircle = ReturnType<typeof removeBombingCircle>
+export function removeBombingCircle(id: number) {
+  return { type: A.RemoveBombingCircle as A.RemoveBombingCircle, id }
+}
+
 export type Action =
   | Move
   | StartMove
@@ -763,3 +817,10 @@ export type Action =
   | SyncCustomStages
   | LeaveGameScene
   | PlaySound
+  | ToggleRandomEvent
+  | SetRandomEvent
+  | UpdateRandomEvent
+  | ClearRandomEvent
+  | AddBombingCircle
+  | UpdateBombingCircle
+  | RemoveBombingCircle

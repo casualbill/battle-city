@@ -1,5 +1,6 @@
 import { Map, Record, Repeat } from 'immutable'
 import { BotGroupConfig } from '../types/StageConfig'
+import { RandomEvent } from '../types'
 import { A, Action } from '../utils/actions'
 import { inc } from '../utils/common'
 
@@ -55,6 +56,10 @@ const GameRecordBase = Record(
 
     /** stage-enter-curtain相关字段 */
     stageEnterCurtainT: 0,
+    
+    /** 随机事件相关字段 */
+    randomEventEnabled: false,
+    currentRandomEvent: null as RandomEvent | null,
   },
   'GameRecord',
 )
@@ -119,6 +124,46 @@ export default function game(state = new GameRecord(), action: Action) {
     )
   } else if (action.type === A.SetIsSpawningBotTank) {
     return state.set('isSpawningBotTank', action.isSpawning)
+  } 
+  // 随机事件相关处理
+  else if (action.type === A.ToggleRandomEvent) {
+    return state.set('randomEventEnabled', !state.randomEventEnabled)
+  } else if (action.type === A.SetRandomEvent) {
+    return state.set('currentRandomEvent', action.event)
+  } else if (action.type === A.UpdateRandomEvent) {
+    return state.update('currentRandomEvent', event => {
+      if (!event) return null
+      return { ...event, ...action.event }
+    })
+  } else if (action.type === A.ClearRandomEvent) {
+    return state.set('currentRandomEvent', null)
+  } else if (action.type === A.AddBombingCircle) {
+    return state.update('currentRandomEvent', event => {
+      if (!event || event.type !== 'bombing') return event
+      return {
+        ...event,
+        circles: [...event.circles, action.circle]
+      }
+    })
+  } else if (action.type === A.UpdateBombingCircle) {
+    const { id, updates } = action
+    return state.update('currentRandomEvent', event => {
+      if (!event || event.type !== 'bombing') return event
+      return {
+        ...event,
+        circles: event.circles.map(circle => 
+          circle.id === id ? { ...circle, ...updates } : circle
+        )
+      }
+    })
+  } else if (action.type === A.RemoveBombingCircle) {
+    return state.update('currentRandomEvent', event => {
+      if (!event || event.type !== 'bombing') return event
+      return {
+        ...event,
+        circles: event.circles.filter(circle => circle.id !== action.id)
+      }
+    })
   } else {
     return state
   }
