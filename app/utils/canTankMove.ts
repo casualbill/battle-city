@@ -99,12 +99,27 @@ export default function canTankMove(state: State, tank: TankRecord, threshhold =
   const {
     tanks,
     map: { bricks, steels, rivers, eagle, restrictedAreas },
+    game: { currentRandomEvent, tideProgress }
   } = state
   const tankRect = asRect(tank)
 
   // 判断是否位于战场内
   if (!isInField(tankRect)) {
     return false
+  }
+
+  // 潮汐区域限制移动
+  if (currentRandomEvent === 'tide' && tideProgress > 0) {
+    const tideAreaWidth = 13 * BLOCK_SIZE * tideProgress
+    const tideAreaHeight = 13 * BLOCK_SIZE * tideProgress
+    
+    // 检查坦克是否在潮汐区域内
+    if (tankRect.x < tideAreaWidth || 
+        tankRect.x + tankRect.width > 13 * BLOCK_SIZE - tideAreaWidth || 
+        tankRect.y < tideAreaHeight || 
+        tankRect.y + tankRect.height > 13 * BLOCK_SIZE - tideAreaHeight) {
+      return false
+    }
   }
 
   // 判断是否与地形相碰撞

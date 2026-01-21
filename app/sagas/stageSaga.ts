@@ -1,5 +1,5 @@
 import { replace } from 'react-router-redux'
-import { cancelled, put, select, take } from 'redux-saga/effects'
+import { cancel, cancelled, fork, put, race, select, take } from 'redux-saga/effects'
 import { State } from '../reducers'
 import { TankRecord } from '../types'
 import StageConfig from '../types/StageConfig'
@@ -9,6 +9,7 @@ import { frame as f } from '../utils/common'
 import * as selectors from '../utils/selectors'
 import Timing from '../utils/Timing'
 import animateStatistics from './animateStatistics'
+import randomEventSaga from './randomEventSaga'
 
 function* animateCurtainAndLoadMap(stage: StageConfig) {
   try {
@@ -48,11 +49,16 @@ export default function* stageSaga(stage: StageConfig) {
   const { router }: State = yield select()
   yield put(replace(`/stage/${stage.name}${router.location.search}`))
 
+  let randomEventTask: any
+
   try {
     yield animateCurtainAndLoadMap(stage)
     yield put(actions.beforeStartStage(stage))
     yield put(actions.showHud())
     yield put(actions.startStage(stage))
+
+    // 启动随机事件 saga
+    randomEventTask = yield fork(randomEventSaga)
 
     while (true) {
       const action: actions.Action = yield take([A.SetTankToDead, A.DestroyEagle])
@@ -81,6 +87,10 @@ export default function* stageSaga(stage: StageConfig) {
       }
     }
   } finally {
+    // 取消随机事件 saga
+    if (randomEventTask) {
+      yield cancel(randomEventTask)
+    }
     yield put(actions.hideHud())
   }
 }

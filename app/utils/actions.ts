@@ -100,6 +100,14 @@ export enum A {
   SyncCustomStages = 'SyncCustomStages',
   LeaveGameScene = 'LeaveGameScene',
   PlaySound = 'PlaySound',
+  ToggleRandomEvent = 'ToggleRandomEvent',
+  SetRandomEvent = 'SetRandomEvent',
+  UpdateTideProgress = 'UpdateTideProgress',
+  SetBlizzardActive = 'SetBlizzardActive',
+  AddBombingTarget = 'AddBombingTarget',
+  RemoveBombingTarget = 'RemoveBombingTarget',
+  ExplodeBombingTarget = 'ExplodeBombingTarget',
+  ClearBombingTargets = 'ClearBombingTargets',
 }
 
 export type Move = ReturnType<typeof move>
@@ -625,6 +633,71 @@ export function playSound(soundName: SoundName) {
   }
 }
 
+export type ToggleRandomEvent = ReturnType<typeof toggleRandomEvent>
+export function toggleRandomEvent() {
+  return {
+    type: A.ToggleRandomEvent as A.ToggleRandomEvent,
+  }
+}
+
+export type SetRandomEvent = ReturnType<typeof setRandomEvent>
+export function setRandomEvent(eventType: 'tide' | 'blizzard' | 'bombing' | null) {
+  return {
+    type: A.SetRandomEvent as A.SetRandomEvent,
+    eventType,
+  }
+}
+
+export type UpdateTideProgress = ReturnType<typeof updateTideProgress>
+export function updateTideProgress(progress: number, direction: 'in' | 'out') {
+  return {
+    type: A.UpdateTideProgress as A.UpdateTideProgress,
+    progress,
+    direction,
+  }
+}
+
+export type SetBlizzardActive = ReturnType<typeof setBlizzardActive>
+export function setBlizzardActive(active: boolean) {
+  return {
+    type: A.SetBlizzardActive as A.SetBlizzardActive,
+    active,
+  }
+}
+
+export type AddBombingTarget = ReturnType<typeof addBombingTarget>
+export function addBombingTarget(id: string, x: number, y: number) {
+  return {
+    type: A.AddBombingTarget as A.AddBombingTarget,
+    id,
+    x,
+    y,
+  }
+}
+
+export type RemoveBombingTarget = ReturnType<typeof removeBombingTarget>
+export function removeBombingTarget(id: string) {
+  return {
+    type: A.RemoveBombingTarget as A.RemoveBombingTarget,
+    id,
+  }
+}
+
+export type ExplodeBombingTarget = ReturnType<typeof explodeBombingTarget>
+export function explodeBombingTarget(id: string) {
+  return {
+    type: A.ExplodeBombingTarget as A.ExplodeBombingTarget,
+    id,
+  }
+}
+
+export type ClearBombingTargets = ReturnType<typeof clearBombingTargets>
+export function clearBombingTargets() {
+  return {
+    type: A.ClearBombingTargets as A.ClearBombingTargets,
+  }
+}
+
 export type BeforeEndStage = ReturnType<typeof beforeEndStage>
 export const beforeEndStage = () => ({ type: A.BeforeEndStage as A.BeforeEndStage })
 
@@ -763,3 +836,11 @@ export type Action =
   | SyncCustomStages
   | LeaveGameScene
   | PlaySound
+  | ToggleRandomEvent
+  | SetRandomEvent
+  | UpdateTideProgress
+  | SetBlizzardActive
+  | AddBombingTarget
+  | RemoveBombingTarget
+  | ExplodeBombingTarget
+  | ClearBombingTargets

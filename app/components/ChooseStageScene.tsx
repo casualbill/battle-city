@@ -6,6 +6,7 @@ import { push, replace } from 'react-router-redux'
 import { Dispatch } from 'redux'
 import { StageConfig, State } from '../types'
 import { BLOCK_SIZE as B, PLAYER_CONFIGS } from '../utils/constants'
+import { toggleRandomEvent } from '../utils/actions'
 import Screen from './Screen'
 import StagePreview from './StagePreview'
 import Text from './Text'
@@ -13,6 +14,7 @@ import TextButton from './TextButton'
 
 class ChooseStageScene extends React.PureComponent<{
   stages: List<StageConfig>
+  randomEventEnabled: boolean
   dispatch: Dispatch
   location: Location
   match: match<{ stageName: string }>
@@ -72,7 +74,7 @@ class ChooseStageScene extends React.PureComponent<{
   }
 
   render() {
-    const { match, dispatch, stages } = this.props
+    const { match, dispatch, stages, randomEventEnabled } = this.props
     const stageNames = stages.map(s => s.name)
     const { stageName } = match.params
     if (!stageNames.includes(stageName)) {
@@ -122,6 +124,17 @@ class ChooseStageScene extends React.PureComponent<{
           <TextButton content="play" stroke="#96d332" x={6 * B} y={0} onClick={this.onStartPlay} />
           <TextButton content="back" x={9 * B} y={0} onClick={() => dispatch(replace('/'))} />
         </g>
+        <g className="random-event-toggle" transform={`translate(${0.5 * B}, ${10.5 * B})`}>
+          <Text content="RANDOM EVENT:" x={0} y={0} fill="white" />
+          <TextButton
+            content={randomEventEnabled ? "ON" : "OFF"}
+            stroke={randomEventEnabled ? "#96d332" : "#ff6b6b"}
+            x={6 * B}
+            y={0}
+            onClick={() => dispatch(toggleRandomEvent())}
+            textFill="white"
+          />
+        </g>
         <g className="hint" transform={`translate(${0.5 * B},${14.5 * B}) scale(0.5)`}>
           <Text fill="#999" content="Press left or right to choose stages. Press fire to start." />
         </g>
@@ -130,6 +143,9 @@ class ChooseStageScene extends React.PureComponent<{
   }
 }
 
-const mapStateToProps = (state: State) => ({ stages: state.stages })
+const mapStateToProps = (state: State) => ({ 
+  stages: state.stages, 
+  randomEventEnabled: state.game.randomEventEnabled 
+})
 
 export default connect(mapStateToProps)(ChooseStageScene)

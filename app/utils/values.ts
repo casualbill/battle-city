@@ -1,4 +1,5 @@
 import { TankRecord } from '../types'
+import { State } from '../reducers'
 
 namespace values {
   export function bulletPower(tank: TankRecord) {
@@ -11,20 +12,28 @@ namespace values {
     }
   }
 
-  export function moveSpeed(tank: TankRecord) {
+  export function moveSpeed(tank: TankRecord, state?: State) {
     // todo 需要校准数值
+    let baseSpeed: number
     if (tank.side === 'player') {
-      return DEV.FAST ? 0.06 : 0.045
+      baseSpeed = DEV.FAST ? 0.06 : 0.045
     } else {
       if (tank.level === 'power') {
-        return 0.045
+        baseSpeed = 0.045
       } else if (tank.level === 'fast') {
-        return 0.06
+        baseSpeed = 0.06
       } else {
         // baisc or armor
-        return 0.03
+        baseSpeed = 0.03
       }
     }
+
+    // 暴雪事件：所有坦克移动速度为80%
+    if (state && state.game.currentRandomEvent === 'blizzard' && state.game.blizzardActive) {
+      return baseSpeed * 0.8
+    }
+
+    return baseSpeed
   }
 
   export function bulletInterval(tank: TankRecord) {
